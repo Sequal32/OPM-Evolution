@@ -33,11 +33,6 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 					progression01 = "level0-10"
 				})
 			end
-			PlayerStats.StaminaLevel = 250--Temp
-			PlayerStats.DefenseLevel = 250--Temp
-			PlayerStats.StrengthLevel = 250--Temp
-			PlayerStats.AgilityLevel = 250--Temp
-			PlayerStats.Level = 160
 			
 			PlayerStats.EXPNeeded = math.ceil(1.12^Data.Level * 125)
 			PlayerStats.MaxHealth = Data.DefenseLevel*100 + (Data.Level-1) * 50
@@ -230,33 +225,38 @@ function MS.ProcessReceipt(Receipt)
 end
 
 -- ADMIN PANEL
-RP.Events.Admin.AppendData.OnServerEvent:Connect(function(Player, Level, Strength, Agility, Stamina)
+RP.Events.Admin.AppendData.OnServerEvent:Connect(function(Player, Level, Strength, Agility, Stamina, EXP, Yen, AttributePoints)
+    PlayerCurrentStats[Player].Strength = Strength
+    PlayerCurrentStats[Player].Stamina = Stamina
+    PlayerCurrentStats[Player].Defense = Defense
+    PlayerCurrentStats[Player].Agility = Agility
+    PlayerCurrentStats[Player].Level = Level
+    PlayerCurrentStats[Player].EXP = EXP
+    PlayerCurrentStats[Player].Yen = Yen
+    PlayerCurrentStats[Player].AttributePoints = AttributePoints
+
+    SaveCurrentStats(Player)
+end)
+
+-- Save data upon player leaving and removes unneeded data
+function SaveCurrentStats(Player)
+    local PlayerStats = PlayerCurrentStats[Player]
     Updates.SaveData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId, {
         ["Yen"] = PlayerStats.Yen,
         ["EXP"] = PlayerStats.EXP,
-        ["StrengthLevel"] = Strength,
-        ["StaminaLevel"] = Stamina,
-        ["DefenseLevel"] = Defense,
-        ["AgilityLevel"] = Agility,
-        ["Level"] = PlayerCurrentStats,
+        ["StrengthLevel"] = PlayerStats.StrengthLevel,
+        ["StaminaLevel"] = PlayerStats.StaminaLevel,
+        ["DefenseLevel"] = PlayerStats.DefenseLevel,
+        ["AgilityLevel"] = PlayerStats.AgilityLevel,
+        ["Level"] = PlayerStats.Level,
         ["AttributePoints"] = PlayerStats.AttributePoints
     })
-end)
+end
 
--- Save data upon player leaving and removes unbeeded data
 game.Players.PlayerRemoving:Connect(function(Player)
 	local PlayerStats = PlayerCurrentStats[Player]
 	if PlayerStats then
-		Updates.SaveData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId, {
-			["Yen"] = PlayerStats.Yen,
-			["EXP"] = PlayerStats.EXP,
-			["StrengthLevel"] = PlayerStats.StrengthLevel,
-			["StaminaLevel"] = PlayerStats.StaminaLevel,
-			["DefenseLevel"] = PlayerStats.DefenseLevel,
-			["AgilityLevel"] = PlayerStats.AgilityLevel,
-			["Level"] = PlayerStats.Level,
-			["AttributePoints"] = PlayerStats.AttributePoints
-		})
+		SaveCurrentStats(Player)
 		
 		PlayerStats = nil
 		LastSaves[Player] = nil
@@ -300,16 +300,7 @@ while wait(0.5) do
 			-- Save data automatically every minute
 			if LastSaves[Player] and LastSaves[Player] >= 60 then
 				LastSaves[Player] = 0
-				Updates.SaveData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId, {
-					["Yen"] = PlayerStats.Yen,
-					["EXP"] = PlayerStats.EXP,
-					["StrengthLevel"] = PlayerStats.StrengthLevel,
-					["StaminaLevel"] = PlayerStats.StaminaLevel,
-					["DefenseLevel"] = PlayerStats.DefenseLevel,
-					["AgilityLevel"] = PlayerStats.AgilityLevel,
-					["Level"] = PlayerStats.Level,
-					["AttributePoints"] = PlayerStats.AttributePoints
-				})
+				SaveCurrentStats(Player)
 			else
 				LastSaves[Player] = LastSaves[Player]+0.5
 			end

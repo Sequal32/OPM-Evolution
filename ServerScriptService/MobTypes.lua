@@ -8,9 +8,7 @@ MobTypes.Kelp = {
 	["DefenseLevel"] = 100,
 	["StaminaLevel"] = 100,
     ["Level"] = 100,
-    ["OnDied"] = function(Character)
-        Misc.WeldWithC1(Character.Head, Character.Features.Kelp, CFrame.new(-0.633468628, -1.39546204, -6.08973694, 0.99619472, 0.0871557891, 0, -0.0871557966, 0.99619472, 0, 0, 0, 1)).Parent = Character.Head
-    end
+    ["RespawnTime"] = 0
 }
 
 MobTypes.StrongThug = {
@@ -18,7 +16,8 @@ MobTypes.StrongThug = {
 	["AgilityLevel"] = 15,
 	["DefenseLevel"] = 15,
 	["StaminaLevel"] = 15,
-	["Level"] = 15
+    ["Level"] = 15,
+    ["RespawnTime"] = 3
 }
 
 MobTypes.WeakThug = {
@@ -26,7 +25,8 @@ MobTypes.WeakThug = {
 	["AgilityLevel"] = 5,
 	["DefenseLevel"] = 5,
 	["StaminaLevel"] = 5,
-	["Level"] = 5
+    ["Level"] = 5,
+    ["RespawnTime"] = 3
 }
 
 return MobTypes

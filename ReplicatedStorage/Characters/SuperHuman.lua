@@ -133,7 +133,7 @@ function SuperHuman.RangedPunch(TargetPosition)
 		local EndCFrame = StartCFrame + Initial.lookVector*10
 		
 		local Tween, Fist = TweenNewFist(StartCFrame, EndCFrame)
-		local Part, Position = Misc.FindCollisionPart(StartCFrame.p, (MoreInitial + MoreInitial.lookVector*40).p, Character)
+		local Part, Position = Misc.FindCollisionPart(StartCFrame.p, (MoreInitial + MoreInitial.lookVector*40).p, Character, 25)
 		
 		if Part then table.insert(CollisionPositions, Position) end
 	end

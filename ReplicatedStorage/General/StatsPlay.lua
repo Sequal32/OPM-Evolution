@@ -278,7 +278,7 @@ function Stats.SuperHuman.RangedPunch.StaminaRate()
 end
 
 function Stats.SuperHuman.RangedPunch.Damage()
-	return RNGCorrected(3 * Stats.Current.StrengthLevel)
+	return RNGCorrected(1.5 * Stats.Current.StrengthLevel)
 end
 
 function Stats.SuperHuman.RangedPunch.Cooldown()

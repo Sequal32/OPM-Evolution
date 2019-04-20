@@ -75,10 +75,10 @@ function AI.Spawn(AIModel, Position)
 		AI.Died = true
 		CS:RemoveTag(Model, "AttackableMob")
         
-        if AI.Stats.OnDied then AI.Stats.OnDied() end
+        if AI.Stats.OnDied then AI.Stats.OnDied(AI.Model) end
 
-		spawn(function()
-			wait(3)
+        spawn(function()
+			wait(AI.Stats.RespawnTime)
 			AI.Model:Destroy()
 		end)
 		return MaxHealthValue.Value/20

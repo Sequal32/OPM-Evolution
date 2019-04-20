@@ -8,7 +8,9 @@ ActiveMobs = {}
 AIObjects = game:GetService("ServerStorage").AIModels
 AIUniqueLocations = workspace.AIUniqueSpawnLocations
 AIUnique = {
-	{"Kelp", AIObjects["Kelp Monster [Tiger]"], AIUniqueLocations.Kelp},
+    {"Kelp", AIObjects["Kelp Monster [Tiger]"], AIUniqueLocations.Kelp1},
+    {"Kelp", AIObjects["Kelp Monster [Tiger]"], AIUniqueLocations.Kelp2},
+    {"Kelp", AIObjects["Kelp Monster [Tiger]"], AIUniqueLocations.Kelp3},
 }
 
 -- Handling punching bags
