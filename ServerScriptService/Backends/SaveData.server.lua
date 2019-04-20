@@ -102,7 +102,7 @@ function CreateNewData(Type, Key)
 end
 
 Updates.GetData.OnInvoke = function(DatastoreName, Key)
-	local Datastore = (DatastoreName == "Stats" and StatsDS) or (DatastoreName == "Character" and CharacterDS) or (DatastoreName == "History" and HistoryDS) or nil
+	local Datastore = (DatastoreName == "Stats" and StatsDS) or (DatastoreName == "Character" and CharacterDS) or (DatastoreName == "History" and HistoryDS) or DS:GetGlobalDataStore()
 	if not Datastore then return nil end
 	
 	local Data = GetData(Datastore, Key)
@@ -116,7 +116,7 @@ Updates.GetData.OnInvoke = function(DatastoreName, Key)
 end
 
 Updates.SaveData.OnInvoke = function(DatastoreName, Key, Data)
-	local Datastore = (DatastoreName == "Stats" and StatsDS) or (DatastoreName == "Character" and CharacterDS) or (DatastoreName == "History" and HistoryDS) or nil
+	local Datastore = (DatastoreName == "Stats" and StatsDS) or (DatastoreName == "Character" and CharacterDS) or (DatastoreName == "History" and HistoryDS) or DS:GetGlobalDataStore()
 	
 	if not Datastore then return nil end
 	
@@ -124,7 +124,7 @@ Updates.SaveData.OnInvoke = function(DatastoreName, Key, Data)
 end
 
 Updates.UpdateData.OnInvoke = function(DatastoreName, Key, Function)
-	local Datastore = (DatastoreName == "Stats" and StatsDS) or (DatastoreName == "Character" and CharacterDS) or (DatastoreName == "History" and HistoryDS) or nil
+	local Datastore = (DatastoreName == "Stats" and StatsDS) or (DatastoreName == "Character" and CharacterDS) or (DatastoreName == "History" and HistoryDS) or DS:GetGlobalDataStore()
 	
 	if not Datastore then return nil end
 	

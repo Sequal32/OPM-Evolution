@@ -229,6 +229,20 @@ function MS.ProcessReceipt(Receipt)
 	end
 end
 
+-- ADMIN PANEL
+RP.Events.Admin.AppendData.OnServerEvent:Connect(function(Player, Level, Strength, Agility, Stamina)
+    Updates.SaveData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId, {
+        ["Yen"] = PlayerStats.Yen,
+        ["EXP"] = PlayerStats.EXP,
+        ["StrengthLevel"] = Strength,
+        ["StaminaLevel"] = Stamina,
+        ["DefenseLevel"] = Defense,
+        ["AgilityLevel"] = Agility,
+        ["Level"] = PlayerCurrentStats,
+        ["AttributePoints"] = PlayerStats.AttributePoints
+    })
+end)
+
 -- Save data upon player leaving and removes unbeeded data
 game.Players.PlayerRemoving:Connect(function(Player)
 	local PlayerStats = PlayerCurrentStats[Player]
