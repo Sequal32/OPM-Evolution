@@ -3,7 +3,7 @@ local Attack = {}
 RP = game:GetService("ReplicatedStorage")
 LoadAnimation = require(RP.General.LoadAnimation)
 Stat = nil
-Misc = require(RP.Misc)
+Misc = require(RP.General.Misc)
 
 function Attack.Animate()
 	if Attack.Alternate then 

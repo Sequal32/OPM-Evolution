@@ -23,7 +23,7 @@ AirStep = Resources.AirStep
 Trails = Resources.Trails
 
 -- Requires
-Misc = require(RP.Misc)
+Misc = require(RP.General.Misc)
 BasicAttack = require(RP.SharedSkills.BasicAttack)
 Jump = require(RP.SharedSkills.Jump)
 Explosion = require(Effects.Explosion)

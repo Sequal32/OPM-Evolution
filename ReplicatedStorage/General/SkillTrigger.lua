@@ -9,7 +9,6 @@ end
 function DisableHold()
 	Trigger.Held = false
 	Trigger.FunctionDisableCallback(Trigger.FunctionDisable())
-	print("Hello?")
 end
 
 function DisableToggle()
@@ -39,7 +38,6 @@ function Hold(ActionName, InputState, InputObj)
 		
 		while Trigger.Held do
 			if Trigger.Cancelling then DisableHold() break end
-			print("FIRE HOLD")
 			Trigger.TriggeredAt = os.time()
 			Trigger.FunctionMainCallback(Trigger.FunctionMain(Trigger.FunctionGetInfo()), Trigger.LastCall)
 			Trigger.LastCall = wait(Trigger.CooldownMain())
@@ -56,12 +54,11 @@ function HoldOnce(ActionName, InputState, InputObj)
 	if InputState == Enum.UserInputState.Begin then
 		Trigger.Cancelling = false
 		if CurrentTime-Trigger.TriggeredAt < Trigger.CooldownLength() then return end
-		
-		
+
 		Trigger.FunctionEnableCallback(Trigger.FunctionEnable(Trigger.FunctionGetInfo()))
 		
 		if Trigger.Cancelling then DisableHold() return end
-		print("FIRE ONCE HOLD")
+		
 		Trigger.TriggeredAt = os.time()
 		Trigger.FunctionMainCallback(Trigger.FunctionMain(Trigger.FunctionGetInfo()))
 		Trigger.LastCall = wait(Trigger.CooldownMain())
@@ -87,7 +84,6 @@ function Toggle(ActionName, InputState, InputObj)
 			
 			while Trigger.Toggled do
 				if Trigger.Cancelling then DisableToggle() break end
-				print("FIRE TOGGLE")
 				Trigger.TriggeredAt = CurrentTime
 				Trigger.FunctionMainCallback(Trigger.FunctionMain(Trigger.FunctionGetInfo()), Trigger.LastCall)
 				Trigger.LastCall = wait(Trigger.CooldownMain())
@@ -105,9 +101,8 @@ function Press(ActionName, InputState, InputObj)
 			Trigger.FunctionEnableCallback(Trigger.FunctionEnable())
 	
 			if Trigger.Cancelling then return end
-			print("FIRE PRESS")
-			Trigger.TriggeredAt = os.time()
 			
+			Trigger.TriggeredAt = os.time()
 			Trigger.FunctionMainCallback(Trigger.FunctionMain(Trigger.FunctionGetInfo()))
 		end
 	end
@@ -126,6 +121,8 @@ function Trigger.Cancel()
 end
 
 function Trigger.New(Name, Input, CreateTouchButton, TriggerType, Cooldowns, Functions)
+    CAS:UnbindAction(Name) -- Make sure we're overwriting the previous action if there is one
+
 	if TriggerType == "Hold" then
 		CAS:BindAction(Name, Hold, CreateTouchButton, Input)
 		Trigger.Held = false

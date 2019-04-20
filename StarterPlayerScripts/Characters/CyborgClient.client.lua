@@ -14,7 +14,7 @@ Resources = RP.Resources.Cyborg
 
 Trigger = General.SkillTrigger
 
-Misc = require(RP.Misc)
+Misc = require(RP.General.Misc)
 
 -- INITIALIZE EVERYTHING
 Player = require(General.Player)

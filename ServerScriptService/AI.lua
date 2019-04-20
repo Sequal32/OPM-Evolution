@@ -32,7 +32,8 @@ end
 function AI.Spawn(AIModel, Position)
 	local AIName, Model = AIModel[1], AIModel[2]:Clone()
 	local Position = Position or AI.PickSpawnLocation()
-	
+    
+    AI.Spawnpoint = Position
 	AI.Died = false
 	AI.Stats = AIStats[AIName]
 	AI.Model = Model
@@ -115,13 +116,22 @@ end
 function AI.Loop()
 	local Player, Distance = AI.FindNearestPlayer()
 	
-	if Distance < 5 then
-		if Cooldown <= 0 then AI.WalkAnim:Stop() AI.DamagePlayer(Player) Cooldown = 1 end
+	if Distance < 4 then
+        if Cooldown <= 0 then 
+            AI.WalkAnim:Stop() 
+            AI.DamagePlayer(Player) 
+            Cooldown = 1 
+        end
 	elseif Distance < 40 then 
-		if not AI.WalkAnim.IsPlaying then AI.WalkAnim:Play() AI.IdleAnim:Stop() end
+        if not AI.WalkAnim.IsPlaying then 
+            AI.WalkAnim:Play() 
+            AI.IdleAnim:Stop() 
+        end
+
 		AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
-	else
-		if not AI.IdleAnim.IsPlaying then
+    elseif Distance > 40 then
+        AI.Model.Humanoid:MoveTo(AI.Model.PrimaryPart.Position) -- Stop the AI's movement
+        if not AI.IdleAnim.IsPlaying then
 			AI.WalkAnim:Stop()
 			AI.IdleAnim:Play()
 		end

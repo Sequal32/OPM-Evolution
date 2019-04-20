@@ -230,7 +230,7 @@ end
 -- Superhuman Stats
 
 function Stats.SuperHuman.Punch.StaminaRate()
-	return 2.5 + GetTenthPercentage("StrengthLevel") * 25
+	return 2.5 + GetTenthPercentage("StrengthLevel") * 6.25
 end
 
 function Stats.SuperHuman.Punch.Cooldown()
@@ -238,7 +238,7 @@ function Stats.SuperHuman.Punch.Cooldown()
 end
 
 function Stats.SuperHuman.Punch.Damage()
-	return RNGCorrected(5.4 * Stats.Current.StrengthLevel)
+	return RNGCorrected(2.7 * Stats.Current.StrengthLevel)
 end
 
 --function Stats.SuperHuman.BoulderToss.StaminaRate()
@@ -261,12 +261,16 @@ function Stats.SuperHuman.RockSmash.StaminaRate()
 	return 150
 end
 
+function Stats.SuperHuman.RockSmash.NumberOfRocks()
+    return math.floor(Stats.Current.StrengthLevel/50) * 3
+end
+
 function Stats.SuperHuman.RockSmash.Cooldown()
 	return 15 + GetTenthPercentage("StaminaLevel") * -3.75 + GetTenthPercentage("StrengthLevel") * -3.75
 end
 
 function Stats.SuperHuman.RockSmash.Damage()
-	return RNGCorrected(30 * Stats.Current.StrengthLevel)
+	return RNGCorrected(12 * Stats.Current.StrengthLevel)
 end
 
 function Stats.SuperHuman.RangedPunch.StaminaRate()

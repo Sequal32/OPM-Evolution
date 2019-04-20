@@ -22,7 +22,7 @@ AimObject = Resources.Sight
 ShockwaveObject = Resources.Shockwave
 
 -- Requires
-Misc = require(RP.Misc)
+Misc = require(RP.General.Misc)
 Explosion = require(Effects.Explosion)
 BasicAttack = SharedSkills.BasicAttack
 Jump = SharedSkills.Jump
@@ -143,7 +143,7 @@ function SuperHuman.RangedPunch(TargetPosition)
 	for _,position in pairs(CollisionPositions) do
 		spawn(function()
 			local Distance = (PrimaryPart.Position-position).magnitude
-			wait(Distance*0.001111111111)
+			wait(Distance*0.0005555555555)
 			
 			Explosion.Place(CFrame.new(position))
 			if Self then RP.Events.General.DoDamage:FireServer("Radius", true, position, Explosion.Size, 1, Stats.SuperHuman.RangedPunch.Damage()) end
@@ -152,7 +152,7 @@ function SuperHuman.RangedPunch(TargetPosition)
 end
 
 function SuperHuman.RockSmash(LookVector)
-	local StartCFrame = PrimaryPart.CFrame + LookVector*5  
+	local StartCFrame = PrimaryPart.CFrame + LookVector*3
 	local RingStartCFrame = PrimaryPart.CFrame * CFrame.Angles(math.rad(90), 0, 0) - Vector3.new(0, 3, 0)
 	local Parts = {}
 	
@@ -168,7 +168,7 @@ function SuperHuman.RockSmash(LookVector)
 		wait()
 	end
 	
-	for i=1, 10, 1 do
+	for i=1, Stats.SuperHuman.RockSmash.NumberOfRocks(), 1 do
 		local Rock = Rock:Clone()
 		local BricksTouching = {}
 		
@@ -180,7 +180,7 @@ function SuperHuman.RockSmash(LookVector)
 		
 		Tween.Completed:Connect(function()
 			if Self then RP.Events.General.DoDamage:FireServer("Radius", true, Rock.Position+Vector3.new(0, 15, 0), Rock.Size, 5, Stats.SuperHuman.RockSmash.Damage()) end
-			wait(1)
+			wait(3)
 			Tween = TS:Create(Rock, TweenInfo.new(0.5), {["CFrame"] = Rock.CFrame - Vector3.new(0, Rock.Size.X, 0), ["Transparency"] = 1}):Play()
 		end)
 		
@@ -188,7 +188,7 @@ function SuperHuman.RockSmash(LookVector)
 		wait()
 	end
 	
-	wait(2.2)
+	wait(3.7)
 	table.foreach(Parts, function(_, Part)
 		Part:Destroy()
 	end)
@@ -416,8 +416,6 @@ function SuperHuman.PointToPos(Position)
 --	Character:SetPrimaryPartCFrame(CFrame.new(PrimaryPart.Position+Vector3.new(0, 0.5, 0), position))
 end
 
-KS = game:GetService('KeyframeSequenceProvider')
-
 function SuperHuman.New(Plr)
 	Character = Plr.Character
 	PrimaryPart = Plr.PrimaryPart
@@ -431,14 +429,15 @@ function SuperHuman.New(Plr)
 	SuperHuman.Explosion = Explosion.New(Color3.fromRGB(255, 255, 255))
 	
 	SuperHuman.Boulder = Boulder:Clone()
-	
-	SuperHuman.Jump = require(Jump)
+    
+    if not Self then return end -- None of the skills below are going to be replicated
+	SuperHuman.Jump = require(Jump:Clone())
 	SuperHuman.Jump.New(Plr, nil, nil, false)
 	
-	SuperHuman.Sprint = require(Sprint)
+	SuperHuman.Sprint = require(Sprint:Clone())
 	SuperHuman.Sprint.New(Plr)
 	
-	SuperHuman.BasicAttack = require(BasicAttack)
+	SuperHuman.BasicAttack = require(BasicAttack:Clone())
 	SuperHuman.BasicAttack.New(Plr, 3064549303, 3064548076)
 end
 

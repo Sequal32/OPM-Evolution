@@ -23,7 +23,7 @@ ExplosionObject = Resources.Explosion
 Explosion = Effects.Explosion
 
 -- Requires
-Misc = require(RP.Misc)
+Misc = require(RP.General.Misc)
 BasicAttack = require(RP.SharedSkills.BasicAttack)
 Jump = require(RP.SharedSkills.Jump)
 

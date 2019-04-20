@@ -8,7 +8,7 @@ Debris = game:GetService("Debris")
 PS:CreateCollisionGroup("Projectiles")
 PS:CreateCollisionGroup("Players")
 
-Misc = require(RP.Misc)
+Misc = require(RP.General.Misc)
 
 Updates = game:GetService("ServerScriptService").Updates
 
@@ -85,8 +85,9 @@ end)
 function DamageIndicator(Position, Value)
 	local Damage = SS.HitDamage:Clone()
 	Damage.Parent = workspace.Projectiles
-	Damage.Position = Position + Vector3.new(1, 1, 1) * NumGen:NextNumber(-5, 5)
-	Damage.UI.Damage.Text = Value
+	Damage.Position = Position
+    Damage.UI.Damage.Text = Value
+    TS:Create(Damage, TweenInfo.new(1), {["Position"] = Damage.Position + Vector3.new(1, 2, 1) * NumGen:NextNumber(-2, 2)}):Play()
 	TS:Create(Damage.UI.Damage, TweenInfo.new(1), {["TextTransparency"] = 1}):Play()
 	Debris:AddItem(Damage, 2)
 end
@@ -96,8 +97,8 @@ function DamagePlayer(Player, Damage, AttackingPlayer)
 	local EXP = Updates.HealthChange:Invoke(Player, -Damage)
 	
 	if EXP then
-		Updates.Stats.IncrementEXP(AttackingPlayer, EXP)
-		Updates.Stats.IncrementYen(AttackingPlayer, EXP)
+		Updates.Stats.IncrementEXP:Fire(AttackingPlayer, EXP)
+		Updates.Stats.IncrementYen:Fire(AttackingPlayer, EXP)
 	end
 end
 
@@ -150,7 +151,7 @@ function DoDamagePart(Hit, Value, Position, AttackingPlayer, IsSkillAttack)
 	
 	if Player then -- Detects player
 		
-		if VerifyHit(Position, Player) then 
+		if Player ~= AttackingPlayer and VerifyHit(Position, Player) then 
 			DamagePlayer(Player, Value, AttackingPlayer)
 		end
 		

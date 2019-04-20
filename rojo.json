@@ -7,19 +7,19 @@
       "target": "ServerScriptService"
     },
     "Characters": {
-      "path": "Characters",
+      "path": "ReplicatedStorage/Characters",
       "target": "ReplicatedStorage.Characters"
     },
     "Effects": {
-      "path": "Effects",
+      "path": "ReplicatedStorage/Effects",
       "target": "ReplicatedStorage.Effects"
     },
     "General": {
-      "path": "General",
+      "path": "ReplicatedStorage/General",
       "target": "ReplicatedStorage.General"
     },
     "SharedSkills": {
-      "path": "SharedSkills",
+      "path": "ReplicatedStorage/SharedSkills",
       "target": "ReplicatedStorage.SharedSkills"
     },
     "StarterPlayerScripts": {

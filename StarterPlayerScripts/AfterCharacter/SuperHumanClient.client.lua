@@ -15,7 +15,7 @@ Resources = RP.Resources.Ninja
 
 Trigger = General.SkillTrigger
 
-Misc = require(RP.Misc)
+Misc = require(RP.General.Misc)
 
 -- INITIALIZE EVERYTHING
 Player = require(General.Player)
@@ -37,7 +37,7 @@ local BasicAttack = require(Trigger:Clone())
 		["Main"] = SuperHuman.BasicAttack.Use,
 })
 
-function UnlockPunch()
+function UnlockPunch(SkillName)
 	local Punch = require(Trigger:Clone())
 	Punch.New("SuperHumanPunch", Enum.KeyCode.Z, false, "Hold", {
 		["Main"] = StatsB.Punch.Cooldown
@@ -54,7 +54,7 @@ function UnlockPunch()
 	})
 end
 
-function UnlockRangedPunch()
+function UnlockRangedPunch(SkillName)
 	local RangedPunch = require(Trigger:Clone())
 	RangedPunch.New("SuperHumanRangedPunch", Enum.KeyCode.X, false, "Press", {
 		["Length"] = StatsB.RangedPunch.Cooldown
@@ -83,7 +83,7 @@ end
 --	})
 --end
 
-function UnlockRockSmash()
+function UnlockRockSmash(SkillName)
 	local RockSmash = require(Trigger:Clone())
 	RockSmash.New("SuperHumanRockSmash", Enum.KeyCode.C, false, "Press", {
 		["Length"] = StatsB.RockSmash.Cooldown
@@ -97,7 +97,7 @@ function UnlockRockSmash()
 	})
 end
 
-function UnlockJump()
+function UnlockJump(SkillName)
 	local Jump = require(Trigger:Clone())
 	Jump.New("ChargedJump", Enum.KeyCode.V, false, "Hold", {}, {
 		["Enable"] = SuperHuman.Jump.StartJump,
@@ -110,7 +110,7 @@ function UnlockJump()
 	})
 end
 
-function UnlockSprint()
+function UnlockSprint(SkillName)
 	local Sprint = require(Trigger:Clone())
 	Sprint.New("Sprint", Enum.KeyCode.LeftControl, false, "HoldOnce", {}, {
 		["Enable"] = SuperHuman.Sprint.Enable,
@@ -119,7 +119,7 @@ function UnlockSprint()
 	})
 end
 
-function UnlockBurrow()
+function UnlockBurrow(SkillName)
 	local Burrow = require(Trigger:Clone())
 	Burrow.New("Burrow", Enum.KeyCode.F, false, "Hold", {}, {
 		["Enable"] = SuperHuman.StartBurrow,
@@ -136,7 +136,7 @@ function UnlockBurrow()
 	})
 end
 
-function UnlockBullet()
+function UnlockBullet(SkillName)
 	local Bullet = require(Trigger:Clone())
 	Bullet.New("Bullet", Enum.KeyCode.R, false, "Hold", {
 		["Length"] = function() return 5 end
@@ -151,14 +151,21 @@ function UnlockBullet()
 	})
 end
 
+Player.Character.Humanoid.Died:Connect(function()
+    -- Unbind all skills after player death
+    for _,Skill in pairs(UnlockLevels) do
+        CAS:UnbindAction(Skill[3])
+    end
+end)
+
 UnlockLevels = {  -- Function, Unlocked (boolean)
-	["1"] = {UnlockSprint, false},
-	["5"] = {UnlockPunch, false},
-	["10"] = {UnlockJump, false},
-	["15"] = {UnlockRangedPunch, false},
-	["25"] = {UnlockRockSmash, false},
-	["50"] = {UnlockBurrow, false},
-	["75"] = {UnlockBullet, false}
+	["1"] = {UnlockSprint, false, "Sprint"},
+	["5"] = {UnlockPunch, false, "RapidPunch"},
+	["10"] = {UnlockJump, false, "ChargedJump"},
+	["15"] = {UnlockRangedPunch, false, "ExplosiveRangedPunch"},
+	["25"] = {UnlockRockSmash, false, "RockSmash"},
+	["50"] = {UnlockBurrow, false, "Burrow"},
+	["75"] = {UnlockBullet, false, "Bullet"}
 }
 
 GeneralEvents.UnlockLevel.Event:Connect(function(NewLevel)
@@ -169,7 +176,6 @@ GeneralEvents.UnlockLevel.Event:Connect(function(NewLevel)
 		if NewLevel >= LevelNumber and not Unlocked then
 			UnlockLevels[Level][2] = true
 			UnlockSkill()
-			print("Unlocked "..Level)
 		end
 	end
 end)

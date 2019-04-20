@@ -33,11 +33,11 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 					progression01 = "level0-10"
 				})
 			end
---			PlayerStats.StaminaLevel = 250--Temp
---			PlayerStats.DefenseLevel = 250--Temp
---			PlayerStats.StrengthLevel = 250--Temp
---			PlayerStats.AgilityLevel = 250--Temp
---			PlayerStats.Level = 160
+			PlayerStats.StaminaLevel = 250--Temp
+			PlayerStats.DefenseLevel = 250--Temp
+			PlayerStats.StrengthLevel = 250--Temp
+			PlayerStats.AgilityLevel = 250--Temp
+			PlayerStats.Level = 160
 			
 			PlayerStats.EXPNeeded = math.ceil(1.12^Data.Level * 125)
 			PlayerStats.MaxHealth = Data.DefenseLevel*100 + (Data.Level-1) * 50
@@ -118,14 +118,16 @@ function LoadCharacter(Player, CharacterData)
 --		Character.Humanoid:AddAccessory(CharacterItems[Accessory]:Clone())
 --	end
 
-	local Appearance = game.Players:GetCharacterAppearanceAsync(Player.UserId)
+    pcall(function()
+        local Appearance = game.Players:GetCharacterAppearanceAsync(Player.UserId)
 
-	for _,Part in pairs(Appearance:GetChildren()) do
-		if Part:IsA("Accessory") then
-			Part.Parent = Character
-			Part.Handle.Anchored = false
-		end
-	end
+        for _,Part in pairs(Appearance:GetChildren()) do
+            if Part:IsA("Accessory") then
+                Part.Parent = Character
+                Part.Handle.Anchored = false
+            end
+        end
+    end)
 
 --	if not Success then warn("Unable to get appearance for "..Player.UserId) end
 	
