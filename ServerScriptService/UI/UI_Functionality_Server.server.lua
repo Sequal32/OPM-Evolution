@@ -13,7 +13,6 @@ end)
 game.Players.PlayerAdded:Connect(function(player)
 	player.CharacterAdded:Connect(function(char)
 		char.Humanoid.Died:Connect(function()
-			print("Z")
 			wait(6)
 			ui_remotes.CharacterAdded:FireClient(player)
 		end)
@@ -29,9 +28,6 @@ ui_remotes.GetPlayerCurrentLevel.OnServerInvoke  = returnPlayerCurrentLevel
 -- Character Customization
 function AddAccessory(player,character,accessory)
 	wait(1)
-	for i,v in pairs(game.ReplicatedStorage:GetChildren()) do
-		print(v.Name)
-	end
 	local folder = game.ReplicatedStorage:FindFirstChild(player.Name.."_CC")
 	local accessory2 = folder:FindFirstChild(accessory)
 	local char2 = folder:FindFirstChild(character)

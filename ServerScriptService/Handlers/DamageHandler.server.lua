@@ -92,7 +92,6 @@ function DamageIndicator(Position, Value)
 end
 
 function DamagePlayer(Player, Damage, AttackingPlayer)
-	if not AttackingPlayer or not Player or Player == AttackingPlayer then return end
 	local EXP = Updates.HealthChange:Invoke(Player, -Damage)
 	
 	if EXP then
@@ -120,30 +119,9 @@ function DamageNPC(Character, Damage, Perp, IsSkillAttack)
 	end
 end
 
-function DoDamageParts(Parts, Value, AttackingPlayer)
-	local Damaged = {}
-	
-	for _,Part in pairs(Parts) do
-		local Player = IsPlayer(Part)
-		local MobCharacter = IsNPC(Part)
-
-		if Player and Player ~= AttackingPlayer and not Damaged[Player] then
-			DamagePlayer(Player, Value, AttackingPlayer)
-			DamageIndicator(Player.Character.PrimaryPart.Position, Value)
-			Damaged[Player] = 1
-		elseif MobCharacter and not Damaged[MobCharacter] then
-			DamageNPC(MobCharacter, Value, AttackingPlayer)
-			DamageIndicator(MobCharacter.PrimaryPart.Position, Value)
-			Damaged[MobCharacter] = 1
-		else 
-			return false
-		end
-	end
-end
-
 function DoDamageCharacters(CharacterArray, Value, AttackingPlayer)
     for _,Array in pairs(CharacterArray) do
-        Character, Type = Array[1], Array[2]
+        local Character, Type = Array[1], Array[2]
 
         if Type == "Player" and Character ~= AttackingPlayer.Character then
             DamagePlayer(game.Players:GetPlayerFromCharacter(Character), Value, AttackingPlayer)
@@ -164,7 +142,8 @@ function DoDamagePart(Hit, Value, Position, AttackingPlayer, IsSkillAttack)
 	
 	if Player then -- Detects player
 		
-		if Player ~= AttackingPlayer and VerifyHit(Position, Player) then 
+        if Player ~= AttackingPlayer and VerifyHit(Position, Player) then 
+            print("Verified")
 			DamagePlayer(Player, Value, AttackingPlayer)
 		end
 		

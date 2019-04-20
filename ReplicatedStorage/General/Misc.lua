@@ -85,35 +85,6 @@ function _S.FindCollisionPart(Origin, TargetPosition, Character, Range)
 	return workspace:FindPartOnRayWithIgnoreList(ray, Ignore)
 end
 
-function VisualizeRegion(Region)
-	local Part = Instance.new("Part", workspace)
-	Part.Name = "Visual"
-	Part.CFrame = Region.CFrame
-	Part.Size = Region.Size
-	Part.Anchored = true
-    Part.CanCollide = false
-    Part.Transparency = 0.7
-    CS:AddTag(Part, "ProjectileIgnore")
-    Debris:AddItem(Part, 10)
-end
-
-function _S.FindPartsInVicinity(Position, Size, Offset)
-    local Ignore = {}
-
-	Offset = Offset or 1
-    Size = Size + Vector3.new(1, 1, 1) * Offset
-    
-    for _,entry in pairs(CS:GetTagged("ProjectileIgnore")) do
-		table.insert(Ignore, entry)
-	end
-	
-	local Region = Region3.new(Position-Size/2, Position+Size/2)
-	-- VisualizeRegion(Region)
-	local Parts = workspace:FindPartsInRegion3WithIgnoreList(Region, Ignore)
-	
-	return Parts
-end
-
 function _S.FindCharactersInVicinity(Position, Size)
     Characters = {}
 
@@ -146,13 +117,6 @@ function _S.GetTargetMousePos()
 	local Player = game.Players.LocalPlayer
 	local Mouse = Player:GetMouse()
 	local Target = Mouse.Hit
-	
---	if Target then
---		return Target.p
---	end
---	return Mouse.Origin.p+Mouse.Origin.lookVector*1000
-
---	return Target.p
 
 	local CF = CFrame.new(Player.Character.PrimaryPart.Position, Mouse.Origin.p+Mouse.Origin.lookVector*1000)
 	return CF.lookVector*1000 + CF.Position

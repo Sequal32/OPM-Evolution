@@ -36,7 +36,6 @@ CharacterData = {
 -- Private Methods
 
 function SaveData(Datastore, Key, Data)
-	print(Datastore)
 	local success, message = pcall(function()
 		Datastore:SetAsync(Key, Data)
 	end)
@@ -64,7 +63,6 @@ function GetData(Datastore, Key)
 end
 
 function UpdateData(Datastore, Key, Function)
-	print(Datastore)
 	local Data
 	local success, message = pcall(function()
 		Data = Datastore:UpdateAsync(Key, Function)
