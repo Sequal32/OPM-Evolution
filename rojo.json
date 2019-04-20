@@ -1,0 +1,30 @@
+{
+  "name": "OPM Evolution",
+  "servePort": 8000,
+  "partitions": {
+    "ServerScriptService": {
+      "path": "ServerScriptService",
+      "target": "ServerScriptService"
+    },
+    "Characters": {
+      "path": "Characters",
+      "target": "ReplicatedStorage.Characters"
+    },
+    "Effects": {
+      "path": "Effects",
+      "target": "ReplicatedStorage.Effects"
+    },
+    "General": {
+      "path": "General",
+      "target": "ReplicatedStorage.General"
+    },
+    "SharedSkills": {
+      "path": "SharedSkills",
+      "target": "ReplicatedStorage.SharedSkills"
+    },
+    "StarterPlayerScripts": {
+      "path": "StarterPlayerScripts",
+      "target": "StarterPlayer.StarterPlayerScripts"
+    }
+  }
+}
