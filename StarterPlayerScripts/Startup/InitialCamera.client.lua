@@ -8,7 +8,7 @@ Camera.CFrame = CFrame.new(-775.307861, 120.499931, 978.388794)
 
 Stop = false
 
-script.Stop.Event:Connect(function()
+Player.PlayerScripts.Startup.Stop.Event:Connect(function()
 	Camera.CameraType = Enum.CameraType.Custom
 	Stop = true
 	repeat wait() until Player.Character

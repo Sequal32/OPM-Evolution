@@ -215,7 +215,7 @@ MainUI.MainMenu.PlayButton.MouseButton1Click:Connect(function()
 		MainUI.MainMenu.LoadGameButton.Visible = false
 		MainUI.MainMenu.Header.Visible = false
 		
-		CameraScript.Stop:Fire()
+		Startup.Stop:Fire()
 		GeneralEvents.LoadCharacter:FireServer(CurrentCharacter)
 		
 		if workspace.CurrentCamera:FindFirstChild("UI_Blur") then

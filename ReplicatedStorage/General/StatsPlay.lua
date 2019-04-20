@@ -183,7 +183,7 @@ function Stats.Cyborg.Jump.AirMaxHeight()
 end
 
 function Stats.Cyborg.Jump.StaminaRate(Height)
-	return 0.1 * Height/Stats.Cyborg.Jump.ChargeMaxHeight() * Stats.Max.Stamina
+	return math.floor(0.1 * Height/Stats.Cyborg.Jump.ChargeMaxHeight() * Stats.Max.Stamina)
 end
 
 -- Ninja Stats
@@ -270,7 +270,7 @@ function Stats.SuperHuman.RockSmash.Cooldown()
 end
 
 function Stats.SuperHuman.RockSmash.Damage()
-	return RNGCorrected(12 * Stats.Current.StrengthLevel)
+	return RNGCorrected(18 * Stats.Current.StrengthLevel)
 end
 
 function Stats.SuperHuman.RangedPunch.StaminaRate()

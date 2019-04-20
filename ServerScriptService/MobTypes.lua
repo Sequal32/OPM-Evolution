@@ -1,11 +1,16 @@
+local RP = game:GetService("ReplicatedStorage")
+local Misc = require(RP.General.Misc)
 local MobTypes = {}
 
 MobTypes.Kelp = {
-	["StrengthLevel"] = 50,
-	["AgilityLevel"] = 50,
-	["DefenseLevel"] = 50,
-	["StaminaLevel"] = 50,
-	["Level"] = 50
+	["StrengthLevel"] = 100,
+	["AgilityLevel"] = 100,
+	["DefenseLevel"] = 100,
+	["StaminaLevel"] = 100,
+    ["Level"] = 100,
+    ["OnDied"] = function(Character)
+        Misc.WeldWithC1(Character.Head, Character.Features.Kelp, CFrame.new(-0.633468628, -1.39546204, -6.08973694, 0.99619472, 0.0871557891, 0, -0.0871557966, 0.99619472, 0, 0, 0, 1)).Parent = Character.Head
+    end
 }
 
 MobTypes.StrongThug = {

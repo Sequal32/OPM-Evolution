@@ -151,12 +151,12 @@ function SuperHuman.RangedPunch(TargetPosition)
 	end
 end
 
-function SuperHuman.RockSmash(LookVector)
+function SuperHuman.RockSmash(LookVector, NumberOfRocks)
 	local StartCFrame = PrimaryPart.CFrame + LookVector
 	local RingStartCFrame = PrimaryPart.CFrame * CFrame.Angles(math.rad(90), 0, 0) - Vector3.new(0, 3, 0)
 	local Parts = {}
 	
-	if Self then Events.RockSmash:FireServer(LookVector, SuperHuman) end
+	if Self then Events.RockSmash:FireServer(LookVector, NumberOfRocks, SuperHuman) end
 	
 	for i=0, 2, 1 do
 		local Ring = Resources["Ring"..i]:Clone()
@@ -168,7 +168,7 @@ function SuperHuman.RockSmash(LookVector)
 		wait()
 	end
 	
-	for i=1, Stats.SuperHuman.RockSmash.NumberOfRocks(), 1 do
+	for i=1, NumberOfRocks, 1 do
 		local Rock = Rock:Clone()
 		local BricksTouching = {}
 		
@@ -199,14 +199,14 @@ BurrowCFValue = Instance.new("CFrameValue")
 Burrowing = nil
 BurrowingTick = 0
 
-function SuperHuman.SpawnRock()
+function SuperHuman.SpawnRock(CF)
 	local Rock = Rock:Clone()
 	CS:AddTag(Rock, "ProjectileIgnore")
 	Rock.Size = Vector3.new(5, 5, 5)
-	Rock.CFrame = Character.Above.CFrame * CFrame.Angles(math.rad(Misc.NumberGen:NextNumber(-45, 45)), 0, 0) * CFrame.Angles(0, 0, math.rad(Misc.NumberGen:NextNumber(-45, 45)))
+	Rock.CFrame = CF
 	Rock.Parent = workspace.Projectiles
 	--Inform server about the skill
-	if Self then Events.SpawnRock:FireServer(Rock.CFrame, SuperHuman) end
+	if Self then Events.SpawnRock:FireServer(CF, SuperHuman) end
 	
 	TS:Create(Rock, TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 1), {["CFrame"] = Rock.CFrame - Vector3.new(0, Rock.Size.X, 0), ["Transparency"] = 1}):Play()
 	Debris:AddItem(Rock, 1.5)
@@ -227,12 +227,11 @@ end
 function SuperHuman.Burrow(LookVector)
 --	if not Burrowing then return false end
 	
-	
 	local Part, Position = Misc.FindCollisionPart(PrimaryPart.Position-Vector3.new(0, 50, 0), PrimaryPart.Position+Vector3.new(0, 100, 0), nil, 100)
 	TS:Create(BurrowCFValue, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {["Value"] = CFrame.new(Position.X+LookVector.X*50, Position.Y-14, Position.Z+LookVector.Z*50)}):Play()
 	
 	if BurrowingTick % 2 == 0 then
-		SuperHuman.SpawnRock()
+		SuperHuman.SpawnRock(Character.Above.CFrame * CFrame.Angles(math.rad(Misc.NumberGen:NextNumber(-45, 45)), 0, 0) * CFrame.Angles(0, 0, math.rad(Misc.NumberGen:NextNumber(-45, 45))))
 	end
 	
 	BurrowingTick = BurrowingTick+1

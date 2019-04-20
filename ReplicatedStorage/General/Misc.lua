@@ -6,6 +6,18 @@ Camera = workspace.CurrentCamera
 
 _S.NumberGen = Random.new()
 
+function _S.WeldWithC1(a, b, c1)
+   --Make a new Weld and Parent it to a.
+	local weld = Instance.new("Weld", a)
+	--Get the CFrame of b relative to a.
+	weld.C1 = c1
+	--Set the Part0 and Part1 properties respectively
+	weld.Part0 = a
+	weld.Part1 = b
+	--Return the reference to the weld so that you can change it later.
+	return weld
+end
+
 function _S.WeldInPlace(a, b)
 	--Make a new Weld and Parent it to a.
 	local weld = Instance.new("Weld", a)

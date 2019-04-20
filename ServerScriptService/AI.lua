@@ -74,13 +74,19 @@ function AI.Spawn(AIModel, Position)
 		AI.Model.Humanoid.Health = 0
 		AI.Died = true
 		CS:RemoveTag(Model, "AttackableMob")
-		
+        
+        if AI.Stats.OnDied then AI.Stats.OnDied() end
+
 		spawn(function()
 			wait(3)
 			AI.Model:Destroy()
 		end)
 		return MaxHealthValue.Value/20
-	end
+    end
+    
+    -- AI.Model.Health:GetPropertyOnChangedSignal("Value"):Connect(function()
+    --     AI.Aggro = true
+    -- end)
 end
 
 function AI.SpawnRandomModel(Position)
@@ -125,12 +131,12 @@ function AI.Loop()
 	elseif Distance < 40 then 
         if not AI.WalkAnim.IsPlaying then 
             AI.WalkAnim:Play() 
-            AI.IdleAnim:Stop() 
+            AI.IdleAnim:Stop()
         end
 
 		AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
-    elseif Distance > 40 then
-        AI.Model.Humanoid:MoveTo(AI.Model.PrimaryPart.Position) -- Stop the AI's movement
+    else
+        AI.Model.Humanoid:MoveTo(AI.Spawnpoint) -- Stop the AI's movement
         if not AI.IdleAnim.IsPlaying then
 			AI.WalkAnim:Stop()
 			AI.IdleAnim:Play()

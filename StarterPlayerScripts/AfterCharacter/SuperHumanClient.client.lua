@@ -90,7 +90,9 @@ function UnlockRockSmash(SkillName)
 	}, {
 	["Main"] = SuperHuman.RockSmash,
 --	["Info"] = Misc.GetTargetMousePos,
-	["Info"] = Misc.GetCameraLookVector,
+    ["Info"] = function()
+        return Misc.GetCameraLookVector(), StatsB.RockSmash.NumberOfRocks()
+    end,
 	["EnableCallback"] = function()
 		if not StatsA.SubtractStaminaWithChecking(StatsB.RockSmash.StaminaRate()) then RockSmash.Cancel() end
 	end
