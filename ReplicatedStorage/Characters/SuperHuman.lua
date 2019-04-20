@@ -146,13 +146,13 @@ function SuperHuman.RangedPunch(TargetPosition)
 			wait(Distance*0.0005555555555)
 			
 			Explosion.Place(CFrame.new(position))
-			if Self then RP.Events.General.DoDamage:FireServer("Radius", true, position, Explosion.Size, 1, Stats.SuperHuman.RangedPunch.Damage()) end
+			if Self then RP.Events.General.DoDamage:FireServer("Radius", true, position, Explosion.Size.X, Stats.SuperHuman.RangedPunch.Damage()) end
 		end)
 	end
 end
 
 function SuperHuman.RockSmash(LookVector)
-	local StartCFrame = PrimaryPart.CFrame + LookVector*3
+	local StartCFrame = PrimaryPart.CFrame + LookVector
 	local RingStartCFrame = PrimaryPart.CFrame * CFrame.Angles(math.rad(90), 0, 0) - Vector3.new(0, 3, 0)
 	local Parts = {}
 	
@@ -179,8 +179,8 @@ function SuperHuman.RockSmash(LookVector)
 		Tween:Play()
 		
 		Tween.Completed:Connect(function()
-			if Self then RP.Events.General.DoDamage:FireServer("Radius", true, Rock.Position+Vector3.new(0, 15, 0), Rock.Size, 5, Stats.SuperHuman.RockSmash.Damage()) end
-			wait(3)
+			if Self then RP.Events.General.DoDamage:FireServer("Radius", true, Rock.Position, Rock.Size.X, Stats.SuperHuman.RockSmash.Damage()) end
+			wait(2.5)
 			Tween = TS:Create(Rock, TweenInfo.new(0.5), {["CFrame"] = Rock.CFrame - Vector3.new(0, Rock.Size.X, 0), ["Transparency"] = 1}):Play()
 		end)
 		
@@ -297,7 +297,7 @@ function SuperHuman.EndBullet()
 	PrimaryPart.Velocity = Vector3.new()
 	PrimaryPart.RotVelocity = Vector3.new()
 	
-	if Self then RP.Events.General.DoDamage:FireServer("Radius", true, PrimaryPart.Position, Vector3.new(30, 30, 30), nil, Stats.SuperHuman.RockSmash.Damage()) end
+	if Self then RP.Events.General.DoDamage:FireServer("Radius", true, PrimaryPart.Position, 30, Stats.SuperHuman.RockSmash.Damage()) end
 	
 	wait(0.2)
 	BV:Destroy()

@@ -230,7 +230,7 @@ end
 -- Superhuman Stats
 
 function Stats.SuperHuman.Punch.StaminaRate()
-	return 2.5 + GetTenthPercentage("StrengthLevel") * 6.25
+	return 2.5 + GetTenthPercentage("StrengthLevel") * 20
 end
 
 function Stats.SuperHuman.Punch.Cooldown()
@@ -262,7 +262,7 @@ function Stats.SuperHuman.RockSmash.StaminaRate()
 end
 
 function Stats.SuperHuman.RockSmash.NumberOfRocks()
-    return math.floor(Stats.Current.StrengthLevel/50) * 3
+    return math.floor(Stats.Current.StrengthLevel/50) * 3 + 3
 end
 
 function Stats.SuperHuman.RockSmash.Cooldown()

@@ -39,7 +39,7 @@ local BasicAttack = require(Trigger:Clone())
 
 function UnlockPunch(SkillName)
 	local Punch = require(Trigger:Clone())
-	Punch.New("SuperHumanPunch", Enum.KeyCode.Z, false, "Hold", {
+	Punch.New(SkillName, Enum.KeyCode.Z, false, "Hold", {
 		["Main"] = StatsB.Punch.Cooldown
 		}, {
 		["Enable"] = SuperHuman.StartPunch,
@@ -56,7 +56,7 @@ end
 
 function UnlockRangedPunch(SkillName)
 	local RangedPunch = require(Trigger:Clone())
-	RangedPunch.New("SuperHumanRangedPunch", Enum.KeyCode.X, false, "Press", {
+	RangedPunch.New(SkillName, Enum.KeyCode.X, false, "Press", {
 		["Length"] = StatsB.RangedPunch.Cooldown
 		}, {
 		["Main"] = SuperHuman.RangedPunch,
@@ -70,7 +70,7 @@ end
 
 --function UnlockBoulderToss()
 --	local BoulderToss = require(Trigger:Clone())
---	BoulderToss.New("SuperHumanBoulderToss", "3", false, "Press", {
+--	BoulderToss.New(SkillName, "3", false, "Press", {
 --		["Length"] = StatsB.BoulderToss.Cooldown
 --		}, {
 --		["Main"] = SuperHuman.BoulderToss,
@@ -85,7 +85,7 @@ end
 
 function UnlockRockSmash(SkillName)
 	local RockSmash = require(Trigger:Clone())
-	RockSmash.New("SuperHumanRockSmash", Enum.KeyCode.C, false, "Press", {
+	RockSmash.New(SkillName, Enum.KeyCode.C, false, "Press", {
 		["Length"] = StatsB.RockSmash.Cooldown
 	}, {
 	["Main"] = SuperHuman.RockSmash,
@@ -99,7 +99,7 @@ end
 
 function UnlockJump(SkillName)
 	local Jump = require(Trigger:Clone())
-	Jump.New("ChargedJump", Enum.KeyCode.V, false, "Hold", {}, {
+	Jump.New(SkillName, Enum.KeyCode.V, false, "Hold", {}, {
 		["Enable"] = SuperHuman.Jump.StartJump,
 		["Main"] = SuperHuman.Jump.ChargeJump,
 		["Disable"] = SuperHuman.Jump.FinishJump,
@@ -112,7 +112,7 @@ end
 
 function UnlockSprint(SkillName)
 	local Sprint = require(Trigger:Clone())
-	Sprint.New("Sprint", Enum.KeyCode.LeftControl, false, "HoldOnce", {}, {
+	Sprint.New(SkillName, Enum.KeyCode.LeftControl, false, "HoldOnce", {}, {
 		["Enable"] = SuperHuman.Sprint.Enable,
 		["Disable"] = SuperHuman.Sprint.Disable,
 		["Info"] = StatsA.All.Sprint.Speed
@@ -121,7 +121,7 @@ end
 
 function UnlockBurrow(SkillName)
 	local Burrow = require(Trigger:Clone())
-	Burrow.New("Burrow", Enum.KeyCode.F, false, "Hold", {}, {
+	Burrow.New(SkillName, Enum.KeyCode.F, false, "Hold", {}, {
 		["Enable"] = SuperHuman.StartBurrow,
 		["Main"] = SuperHuman.Burrow,
 		["Disable"] = SuperHuman.EndBurrow,
@@ -138,7 +138,7 @@ end
 
 function UnlockBullet(SkillName)
 	local Bullet = require(Trigger:Clone())
-	Bullet.New("Bullet", Enum.KeyCode.R, false, "Hold", {
+	Bullet.New(SkillName, Enum.KeyCode.R, false, "Hold", {
 		["Length"] = function() return 5 end
 		}, {
 		["Enable"] = SuperHuman.StartBullet,
@@ -153,6 +153,7 @@ end
 
 Player.Character.Humanoid.Died:Connect(function()
     -- Unbind all skills after player death
+    CAS:UnbindAction("BasicAttack")
     for _,Skill in pairs(UnlockLevels) do
         CAS:UnbindAction(Skill[3])
     end
@@ -171,11 +172,11 @@ UnlockLevels = {  -- Function, Unlocked (boolean)
 GeneralEvents.UnlockLevel.Event:Connect(function(NewLevel)
 	for Level,Unlock in pairs(UnlockLevels) do
 		local LevelNumber = tonumber(Level)
-		local UnlockSkill,Unlocked = Unlock[1], Unlock[2]
+		local UnlockSkill, Unlocked, SkillName = Unlock[1], Unlock[2], Unlock[3]
 		
 		if NewLevel >= LevelNumber and not Unlocked then
 			UnlockLevels[Level][2] = true
-			UnlockSkill()
+			UnlockSkill(SkillName)
 		end
 	end
 end)

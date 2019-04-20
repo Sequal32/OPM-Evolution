@@ -22,7 +22,7 @@ function Attack.Use()
 	
 	local Origin = PrimaryPart.CFrame + PrimaryPart.CFrame.lookVector
 	
-	RP.Events.General.DoDamage:FireServer("Radius", false, Origin.p, Vector3.new(10, 5, 10), nil, Stat.All.BasicAttack.Damage())
+	RP.Events.General.DoDamage:FireServer("Radius", false, Origin.p+PrimaryPart.CFrame.lookVector*2, 2, Stat.All.BasicAttack.Damage())
 	RP.Events.General.EXPAttack:FireServer("BasicAttack")
 end
 

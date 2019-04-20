@@ -114,6 +114,24 @@ function _S.FindPartsInVicinity(Position, Size, Offset)
 	return Parts
 end
 
+function _S.FindCharactersInVicinity(Position, Size)
+    Characters = {}
+
+    for _,Character in pairs(CS:GetTagged("AttackableMob")) do
+        if (Character.PrimaryPart.Position-Position).magnitude <= Size then
+            table.insert(Characters, {Character, "Mob"})
+        end
+    end
+
+    for _,Character in pairs(CS:GetTagged("AttackablePlayer")) do
+        if (Character.PrimaryPart.Position-Position).magnitude <= Size then
+            table.insert(Characters, {Character, "Player"})
+        end
+    end
+    
+    return Characters
+end
+
 function _S.DetectCollision(Origin, TargetPosition, Character, Part, FunctionWhenHit)
 	local Connection
 	

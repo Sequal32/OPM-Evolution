@@ -63,16 +63,15 @@ RP.Events.General.DoDamage.OnServerEvent:connect(function(Player, Type, IsSkillA
 			DoDamagePart(Part, Damage, Position, Player, IsSkillAttack)
 		end
 	elseif Type == "RayToRadius" then
-		local Origin, Target, Range, Damage, Size, Offset = Params[1], Params[2], Params[3], Params[4], Params[5], Params[6]
+		local Origin, Target, Range, Damage, Size = Params[1], Params[2], Params[3], Params[4], Params[5]
 		local Part, Position = Misc.FindCollisionPart(Origin, Target, Player.Character, Range)
-		local Parts = Misc.FindPartsInVicinity(Position, Size, Offset)
+		local Characters = Misc.FindCharactersInVicinity(Position, Size)
 		
-		DoDamageParts(Parts, Damage, Player)
+		DoDamageCharacters(Characters, Damage, Player)
 	elseif Type == "Radius" then
-		local Position, Size, Offset, Damage = Params[1], Params[2], Params[3], Params[4]
-		local Parts = Misc.FindPartsInVicinity(Position, Size, Offset)
-		
-		DoDamageParts(Parts, Damage, Player)
+		local Position, Size, Damage = Params[1], Params[2], Params[3]
+		local Characters = Misc.FindCharactersInVicinity(Position, Size)
+		DoDamageCharacters(Characters, Damage, Player)
 	end
 end)
 
@@ -140,6 +139,20 @@ function DoDamageParts(Parts, Value, AttackingPlayer)
 			return false
 		end
 	end
+end
+
+function DoDamageCharacters(CharacterArray, Value, AttackingPlayer)
+    for _,Array in pairs(CharacterArray) do
+        Character, Type = Array[1], Array[2]
+
+        if Type == "Player" and Character ~= AttackingPlayer.Character then
+            DamagePlayer(game.Players:GetPlayerFromCharacter(Character), Value, AttackingPlayer)
+            DamageIndicator(Character.PrimaryPart.Position, Value)
+        elseif Type == "Mob" then
+            DamageNPC(Character, Value, AttackingPlayer)
+            DamageIndicator(Character.PrimaryPart.Position, Value)
+        end
+    end
 end
 
 

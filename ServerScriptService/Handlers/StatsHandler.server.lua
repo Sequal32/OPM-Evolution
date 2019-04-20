@@ -33,11 +33,11 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 					progression01 = "level0-10"
 				})
 			end
-			PlayerStats.StaminaLevel = 250--Temp
-			PlayerStats.DefenseLevel = 250--Temp
-			PlayerStats.StrengthLevel = 250--Temp
-			PlayerStats.AgilityLevel = 250--Temp
-			PlayerStats.Level = 160
+			-- PlayerStats.StaminaLevel = 250--Temp
+			-- PlayerStats.DefenseLevel = 250--Temp
+			-- PlayerStats.StrengthLevel = 250--Temp
+			-- PlayerStats.AgilityLevel = 250--Temp
+			-- PlayerStats.Level = 160
 			
 			PlayerStats.EXPNeeded = math.ceil(1.12^Data.Level * 125)
 			PlayerStats.MaxHealth = Data.DefenseLevel*100 + (Data.Level-1) * 50
@@ -108,15 +108,15 @@ function LoadCharacter(Player, CharacterData)
 	if CharacterAppearance.Pant then Character.Pants.PantsTemplate = CharacterAppearance.Pant end
 	if CharacterAppearance.Face then Character.Head.Face.Texture = CharacterAppearance.Face end
 	
---	local Hair = CharacterItems:FindFirstChild(CharacterAppearance["Hair"])
---	local Hair2 = CharacterItems:FindFirstChild(CharacterAppearance["Hair2"])
+	-- local Hair = CharacterItems:FindFirstChild(CharacterAppearance["Hair"])
+	-- local Hair2 = CharacterItems:FindFirstChild(CharacterAppearance["Hair2"])
 	
---	if Hair then Character.Humanoid:AddAccessory(Hair:Clone()) end
---	if Hair2 then Character.Humanoid:AddAccessory(Hair2:Clone()) end
+	-- if Hair then Character.Humanoid:AddAccessory(Hair:Clone()) end
+	-- if Hair2 then Character.Humanoid:AddAccessory(Hair2:Clone()) end
 	
---	for _,Accessory in pairs(CharacterAppearance.Accessories) do
---		Character.Humanoid:AddAccessory(CharacterItems[Accessory]:Clone())
---	end
+	for _,Accessory in pairs(CharacterAppearance.Accessories) do
+		Character.Humanoid:AddAccessory(CharacterItems[Accessory]:Clone())
+	end
 
     pcall(function()
         local Appearance = game.Players:GetCharacterAppearanceAsync(Player.UserId)
