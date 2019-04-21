@@ -35,7 +35,9 @@ MobTypes.VaccineMan = {
 	["DefenseLevel"] = 300,
 	["StaminaLevel"] = 300,
     ["Level"] = 300,
-    ["RespawnTime"] = 3
+    ["Range"] = 15,
+    ["RespawnTime"] = 3,
+    ["AttackingDistance"] = 10
 }
 
 return MobTypes

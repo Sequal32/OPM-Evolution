@@ -236,6 +236,8 @@ RP.Events.Admin.AppendData.OnServerEvent:Connect(function(Player, Level, Strengt
     PlayerCurrentStats[Player].Yen = Yen or PlayerCurrentStats[Player].Yen
     PlayerCurrentStats[Player].AttributePoints = AttributePoints or PlayerCurrentStats[Player].AttributePoints
 
+    General.StatsClient:FireClient(Player, "ALL", PlayerStats)
+
     SaveCurrentStats(Player)
 end)
 
@@ -257,11 +259,10 @@ function SaveCurrentStats(Player)
 end
 
 game.Players.PlayerRemoving:Connect(function(Player)
-	local PlayerStats = PlayerCurrentStats[Player]
-	if PlayerStats then
+	if PlayerCurrentStats[Player] then
 		SaveCurrentStats(Player)
 		
-		PlayerStats = nil
+		PlayerCurrentStats[Player] = nil
 		LastSaves[Player] = nil
 		PlayerCharacters[Player] = nil
 		HealthRegenCooldowns[Player] = nil

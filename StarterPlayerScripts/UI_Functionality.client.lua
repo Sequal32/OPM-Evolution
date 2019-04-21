@@ -18,6 +18,7 @@ ItemShop = Shop:WaitForChild("ShopBG")
 StatsFrame = MainUI:WaitForChild("Stats")
 SettingsFrame = MainUI:WaitForChild("Settings"):WaitForChild("SettingsBG")
 AttributesFrame = StatsFrame:WaitForChild("StatsBG"):WaitForChild("AttributesFrame")
+QuestFrame = MainUI:WaitForChild("Quests"):WaitForChild("QuestsBG")
 
 GeneralEvents = RP:WaitForChild("Events"):WaitForChild("General")
 
@@ -1309,7 +1310,7 @@ MainUI.MainMenu.NewGameWarning.ContinueButton.MouseButton1Click:Connect(function
 	MainUI.MainMenu.LoadGameButton.Visible = false
 	MainUI.MainMenu.Header.Visible = false
 	
-	game.ReplicatedFirst.InitialCamera.Stop:Fire()
+	game.ReplicatedFirst.Startup.InitialCamera.Stop:Fire()
 	GeneralEvents.LoadCharacter:FireServer(CurrentCharacter)
 	
 	if workspace.CurrentCamera:FindFirstChild("UI_Blur") then
@@ -1461,3 +1462,6 @@ BugButton.Activated:Connect(function()
 	
 	CanButton = true
 end)
+
+
+-- QUEST SYSTEM

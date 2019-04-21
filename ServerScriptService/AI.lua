@@ -65,7 +65,7 @@ function AI.Spawn(AIModel, Position)
 	
 
 	AI.BasicAttack = require(RP.SharedSkills.BasicAttack:Clone())
-	AI.BasicAttack.New({["Character"] = Model}, 3064549303, 3064548076)
+	AI.BasicAttack.New({["Character"] = Model}, 3064549303, 3064548076, AI.Stats.Range or 2)
 	
 	AI.WalkAnim = LoadAnimation(Model.Humanoid, 507777826)
 	AI.IdleAnim = LoadAnimation(Model.Humanoid, 507766388)
@@ -122,7 +122,7 @@ end
 function AI.Loop()
 	local Player, Distance = AI.FindNearestPlayer()
 	
-	if Distance < 4 then
+	if Distance < (AI.Stats.AttackingDistance or 4) then
         if Cooldown <= 0 then 
             AI.WalkAnim:Stop() 
             AI.DamagePlayer(Player) 
