@@ -21,11 +21,11 @@ HealthRegenCooldowns = {}
 function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 	local PlayerStats = PlayerCurrentStats[Player]
 	if RequestType == "FETCH" then
-		local FirstTime
+		local Data, FirstTime
 		
 		if not PlayerStats then
-			local Data, FirstTime = Updates.GetData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId)
-			PlayerStats = Data
+			Data, FirstTime = Updates.GetData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId)
+            PlayerStats = Data
 			
 			if FirstTime then -- Analytics
 				Analytics:addProgressionEvent(Player.UserId, {

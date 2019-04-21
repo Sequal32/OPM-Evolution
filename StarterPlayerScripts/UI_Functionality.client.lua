@@ -99,7 +99,7 @@ spawn(function()
 	fc.Disabled = true
 	fc:remove()
 	-- create blur
-	local blur = Instance.new("BlurEffect",workspace.CurrentCamera)
+	local blur = Instance.new("BlurEffect", workspace.CurrentCamera)
 	blur.Name = "UI_Blur"
 	blur.Enabled = true
 	blur.Size = 80
@@ -198,14 +198,15 @@ StatsFrame.StatsBG.CloseButton.MouseButton1Click:Connect(function()
 end)
 
 MainUI.MainMenu.PlayButton.MouseButton1Click:Connect(function()
-    Starting = true
 	local data, FirstTime = GeneralEvents.StatsServer:InvokeServer("FETCH")
 
     if FirstTime then
+        Starting = true
 		beginCustomizeProcess()
     elseif Starting then
-        return		
+        return
     end
+    Starting = true
     
     repeat wait() until not MainUI.CharacterCustomize.Visible
 
@@ -1021,25 +1022,20 @@ end
 loadFaceItems()
 
 function beginCustomizeProcess() -- Run this when C button or new game button has been clicked in main menu
-	-- Get current character and begin customize process
-	print()
+	local blankChar = RP.BlankCharacter:Clone()
+    blankChar.Parent = MainUI.CharacterCustomize.CharacterFrame
+    -- Open CharacterCustomize MainUI
+	MainUI.MainMenu.Visible = false
+    MainUI.CharacterCustomize.Visible = true
+    -- Load blank character from ServerStorage to view port frame
+    local viewportCamera = Instance.new("Camera")
+    MainUI.CharacterCustomize.CharacterFrame.CurrentCamera = viewportCamera
+    viewportCamera.Parent = MainUI.CharacterCustomize.CharacterFrame
+    
+    viewportCamera.CFrame = CFrame.new(blankChar.HumanoidRootPart.CFrame:toWorldSpace(CFrame.new(0,1,-6)).p, blankChar.HumanoidRootPart.CFrame.p)
+    
+    -- Get current character and begin customize process
 	if CharacterAppearance then
-		-- Open CharacterCustomize MainUI
-		MainUI.MainMenu.Visible = false
-		MainUI.CharacterCustomize.Visible = true
-		
-		-- Load blank character from ServerStorage to view port frame
-		
-		local blankChar = RP.BlankCharacter:Clone()
-		blankChar.Parent = MainUI.CharacterCustomize.CharacterFrame
-		
-		
-		local viewportCamera = Instance.new("Camera")
-		MainUI.CharacterCustomize.CharacterFrame.CurrentCamera = viewportCamera
-		viewportCamera.Parent = MainUI.CharacterCustomize.CharacterFrame
-		
-		viewportCamera.CFrame = CFrame.new(blankChar.HumanoidRootPart.CFrame:toWorldSpace(CFrame.new(0,1,-6)).p, blankChar.HumanoidRootPart.CFrame.p)
-		
 		-- Put current items from chracterInfo on the character
 		print(game.HttpService:JSONEncode(CharacterAppearance))
 		for key,value in pairs(CharacterAppearance) do
@@ -1103,114 +1099,114 @@ function beginCustomizeProcess() -- Run this when C button or new game button ha
 				end	
 				--													
 			end
-		end
+        end
+    end
 		
-		-- Now let the user add to and customize the character (by enable isCharacterLoaded value)
-		MainUI.CharacterCustomize.isCharacterLoaded.Value = true
-		
-		-- Add event for the finish button and store the new character info a dictionary
-		MainUI.CharacterCustomize.Finish.MouseButton1Click:Connect(function()
-			-- cc > dictionary code (runs when finish button is clicked)
-			
-			-- Get Shirt
-			if blankChar:FindFirstChild("Shirt") then
-			local ShirtID = blankChar.Shirt.ShirtTemplate
-				for i,v in pairs (CharacterItems.Shirts:GetChildren()) do
-				      if v:IsA("NumberValue") then 
-				            if "rbxassetid://"..v.Value == ShirtID then
-				                   -- match found
-								CharacterAppearance.Shirt = ShirtID
-				                   --for key,value in pairs(CurrentCharacter) do
-				                   --      if key == "Shirt" then 
-				                    --           value = v.Name
-				                   --      end
-				                  -- end
-				            end
-				      end
-				end
-			end
-			
-			
-			-- Get Pants
-			if blankChar:FindFirstChild("Pants") then
-			local PantID = blankChar.Pants.PantsTemplate
-			
-			for I,v in pairs (CharacterItems.Pants:GetChildren()) do
-			      if v:IsA("NumberValue") then 
-			            if "rbxassetid://"..v.Value == PantID then
-			                   -- match found
-							CharacterAppearance.Pant = PantID
-			                  -- for key,value in pairs(CurrentCharacter) do
-			                  --       if key == "Pant" then 
-				--print("TR")
-			                  --               value = v.Name
-			                  --       end
-			                  -- end
-			            end
-			      end
-			end
-			end
-			
-			
-			-- Get Face
-			if blankChar.Head:FindFirstChild("Face") then
-				local FaceID = blankChar.Head.Face.Texture
-				CharacterAppearance.Face = FaceID
-			end
-			
-			--[[
-			-- Get Hair1
-			for z,t in pairs (blankChar:GetChildren()) do
-			      if t:IsA("Accessory") then
-			             if string.sub(t.Name,1,2) == "1_" then
-			                  local accessoryName = string.sub(t.Name, 3)
-			                  if CharacterItems.Hair:FindFirstChild(accessoryName) then
-			                        for key,value in pairs(CurrentCharacter) do
-			                               if key == "Hair1" then
-			                                 value = accessoryName
-			                               end
-			                        end
-			                  end
-			             if string.sub(t.Name,1,2) == "2_" then
-			                  local accessoryName = string.sub(t.Name, 3)
-			                  if CharacterItems.Hair:FindFirstChild(accessoryName) then
-			                        for key,value in pairs(CurrentCharacter) do
-			                               if key == "Hair2" then
-			                                 value = accessoryName
-			                               end
-			                        end
-			                  end
-			            end
-			
-			                  if string.sub(t.Name,1,2) ~= "2_" and string.sub(t.Name,1,2) ~= "1_" then
-			                  local accessoryName = string.sub(t.Name, 3)
-			                  if CharacterItems.Hair:FindFirstChild(accessoryName) then
-			                        for key,value in pairs(CurrentCharacter) do
-			                               if key == "Accessories" then
-			                                 table.insert(value,accessoryName)
-			                               end
-			                        end
-			                  end
-			            end
-			
-			            end
-			      end
-			end	]]--
-			
-			--for k,v in pairs(CurrentCharacter) do
-			--	if k ~= "Accessories" then
-			--		print(k.." - "..v)
-			--	end
-			--end
-			
-		-- Send the dictionary to PlayerData and get it stored in the player's data store
-		
-		CurrentCharacter.Appearance = CharacterAppearance
-		local Success = GeneralEvents.CharacterServer:InvokeServer("UPDATE", CurrentCharacter)
-		
-		MainUI.CharacterCustomize.Visible = false
-		end)
-	end
+    -- Now let the user add to and customize the character (by enable isCharacterLoaded value)
+    MainUI.CharacterCustomize.isCharacterLoaded.Value = true
+    
+    -- Add event for the finish button and store the new character info a dictionary
+    MainUI.CharacterCustomize.Finish.MouseButton1Click:Connect(function()
+        -- cc > dictionary code (runs when finish button is clicked)
+        
+        -- Get Shirt
+        if blankChar:FindFirstChild("Shirt") then
+        local ShirtID = blankChar.Shirt.ShirtTemplate
+            for i,v in pairs (CharacterItems.Shirts:GetChildren()) do
+                    if v:IsA("NumberValue") then 
+                        if "rbxassetid://"..v.Value == ShirtID then
+                                -- match found
+                            CharacterAppearance.Shirt = ShirtID
+                                --for key,value in pairs(CurrentCharacter) do
+                                --      if key == "Shirt" then 
+                                --           value = v.Name
+                                --      end
+                                -- end
+                        end
+                    end
+            end
+        end
+        
+        
+        -- Get Pants
+        if blankChar:FindFirstChild("Pants") then
+        local PantID = blankChar.Pants.PantsTemplate
+        
+        for I,v in pairs (CharacterItems.Pants:GetChildren()) do
+                if v:IsA("NumberValue") then 
+                    if "rbxassetid://"..v.Value == PantID then
+                            -- match found
+                        CharacterAppearance.Pant = PantID
+                            -- for key,value in pairs(CurrentCharacter) do
+                            --       if key == "Pant" then 
+            --print("TR")
+                            --               value = v.Name
+                            --       end
+                            -- end
+                    end
+                end
+        end
+        end
+        
+        
+        -- Get Face
+        if blankChar.Head:FindFirstChild("Face") then
+            local FaceID = blankChar.Head.Face.Texture
+            CharacterAppearance.Face = FaceID
+        end
+        
+        --[[
+        -- Get Hair1
+        for z,t in pairs (blankChar:GetChildren()) do
+                if t:IsA("Accessory") then
+                        if string.sub(t.Name,1,2) == "1_" then
+                            local accessoryName = string.sub(t.Name, 3)
+                            if CharacterItems.Hair:FindFirstChild(accessoryName) then
+                                for key,value in pairs(CurrentCharacter) do
+                                        if key == "Hair1" then
+                                            value = accessoryName
+                                        end
+                                end
+                            end
+                        if string.sub(t.Name,1,2) == "2_" then
+                            local accessoryName = string.sub(t.Name, 3)
+                            if CharacterItems.Hair:FindFirstChild(accessoryName) then
+                                for key,value in pairs(CurrentCharacter) do
+                                        if key == "Hair2" then
+                                            value = accessoryName
+                                        end
+                                end
+                            end
+                    end
+        
+                            if string.sub(t.Name,1,2) ~= "2_" and string.sub(t.Name,1,2) ~= "1_" then
+                            local accessoryName = string.sub(t.Name, 3)
+                            if CharacterItems.Hair:FindFirstChild(accessoryName) then
+                                for key,value in pairs(CurrentCharacter) do
+                                        if key == "Accessories" then
+                                            table.insert(value,accessoryName)
+                                        end
+                                end
+                            end
+                    end
+        
+                    end
+                end
+        end	]]--
+        
+        --for k,v in pairs(CurrentCharacter) do
+        --	if k ~= "Accessories" then
+        --		print(k.." - "..v)
+        --	end
+        --end
+        
+    -- Send the dictionary to PlayerData and get it stored in the player's data store
+    
+    CurrentCharacter.Appearance = CharacterAppearance
+    local Success = GeneralEvents.CharacterServer:InvokeServer("UPDATE", CurrentCharacter)
+    
+    MainUI.CharacterCustomize.Visible = false
+    end)
 end
 
 -- The isCharacterLoaded value is for the Character Customize code to know if there is a character to modify or it will try to modify nothing and error
@@ -1267,11 +1263,12 @@ end)
 function IntroSequence()
     MainUI.MainMenu.NewGameWarning.Visible = false
 	-- Fade out main menu
-	MainUI.MainMenu.ZIndex = 5
-	for i = 1,10 do
-		MainUI.MainMenu.BackgroundTransparency = MainUI.MainMenu.BackgroundTransparency - 0.1
-		wait()
-	end
+    MainUI.MainMenu.ZIndex = 5
+    
+    local Tween = TS:Create(MainUI.MainMenu, TweenInfo.new(0.5), {Transparency = 1})
+    Tween:Play()
+    Tween.Completed:wait()
+
 	MainUI.GameUI.Visible = true
 	MainUI.MainMenu.PlayButton.Visible = false
 	MainUI.MainMenu.SettingsButton.Visible = false
@@ -1282,12 +1279,12 @@ function IntroSequence()
 	
 	Startup.Stop:Fire()
 	GeneralEvents.LoadCharacter:FireServer(CurrentCharacter)
-    
+
     local Tween = TS:Create(workspace.CurrentCamera.UI_Blur, TweenInfo.new(0.5), {Size = 0})
     Tween:Play()
     Tween.Completed:wait()
     workspace.CurrentCamera.UI_Blur:Destroy()
-    
+
 	for i = 1,10 do
 		MainUI.MainMenu.BackgroundTransparency = MainUI.MainMenu.BackgroundTransparency + 0.1
 		wait()
@@ -1302,18 +1299,35 @@ MainUI.MainMenu.NewGameButton.MouseButton1Click:Connect(function()
 end)
 
 MainUI.MainMenu.NewGameWarning.ContinueButton.MouseButton1Click:Connect(function()
-	if Starting then return end
+    print("Pressed")
+    if Starting then return end
+    print("starting")
 	Starting = true
     
     -- Allow user to customize characterdata
     beginCustomizeProcess()
     ui_remotes.ResetUserData:FireServer()
-
     repeat wait() until not MainUI.CharacterCustomize.Visible
-
 	IntroSequence()
 	
 	Starting = false
+end)
+
+-- CUSTOMIZE CHARARCTER IN SETTINGS
+SettingsFrame.Customize.MouseButton1Click:Connect(function()
+    if not workspace.CurrentCamera:FindFirstChild("UI_Blur") then
+        local blur = Instance.new("BlurEffect", workspace.CurrentCamera)
+        blur.Name = "UI_Blur"
+        blur.Enabled = true
+        blur.Size = 80
+    end
+
+    MainUI.GameUI.Visible = false
+    SettingsFrame.Visible = false
+
+    beginCustomizeProcess()
+    repeat wait() until not MainUI.CharacterCustomize.Visible
+	IntroSequence()
 end)
 
 -- ATTRIBUTE LEVELING
@@ -1393,7 +1407,6 @@ function VerifyBody(Body)
 end
 
 SettingsFrame.Feedback.Activated:Connect(function()
-	print("?")
 	FeedbackFrame.Visible = true
 end)
 

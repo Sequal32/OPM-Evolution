@@ -126,8 +126,8 @@ function AI.DamagePlayer(Player)
 end
 
 function AI.Loop()
-	local Player, Distance = AI.FindNearestPlayer()
-	
+    local Player, Distance = AI.FindNearestPlayer()
+    local DistanceToSpawn = (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude
 	if Distance < (AI.Stats.AttackingDistance or 4) then
         if Cooldown <= 0 then 
             AI.WalkAnim:Stop() 
@@ -141,10 +141,15 @@ function AI.Loop()
         end
 
         AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
-    elseif (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude > 2000 then
+    elseif DistanceToSpawn > 2000 then
         AI.Model:SetPrimaryPartCFrame(CFrame.new(AI.Spawnpoint))
-    else
+    elseif DistanceToSpawn > 25 then
+        if not AI.WalkAnim.IsPlaying then 
+            AI.WalkAnim:Play() 
+            AI.IdleAnim:Stop()
+        end
         AI.Model.Humanoid:MoveTo(AI.Spawnpoint) -- Stop the AI's movement
+    else
         if not AI.IdleAnim.IsPlaying then
 			AI.WalkAnim:Stop()
 			AI.IdleAnim:Play()
