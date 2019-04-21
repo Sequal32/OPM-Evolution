@@ -128,7 +128,8 @@ function RegisterCharacter(character, player)
 		ragdollJoint(character.RightUpperArm, character.RightLowerArm, "RightElbow", "BallSocket")
 		ragdollJoint(character.LowerTorso, character.LeftUpperLeg, "LeftHip", "BallSocket")
 		ragdollJoint(character.LowerTorso, character.RightUpperLeg, "RightHip", "BallSocket")
-		wait(0.5)
+        wait(0.5)
+        if not character:FindFirstChild("HumanoidRootPart") then return end
 		character.HumanoidRootPart.CanCollide = false
 	end)
 end

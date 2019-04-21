@@ -46,10 +46,10 @@ function AI.Spawn(AIModel, Position)
 	Event.Name = "Die"
 	local HealthValue = Instance.new("IntValue", Model)
 	HealthValue.Name = "Health"
-	HealthValue.Value = AI.Stats.Level*100
+	HealthValue.Value = AI.Stats.DefenseLevel*100
 	local MaxHealthValue = Instance.new("IntValue", Model)
 	MaxHealthValue.Name = "MaxHealth"
-	MaxHealthValue.Value = AI.Stats.Level*100
+	MaxHealthValue.Value = AI.Stats.DefenseLevel*100
 	
 	-- Put billboard gui
 	local Gui = Resources.Info:Clone()
@@ -58,7 +58,7 @@ function AI.Spawn(AIModel, Position)
 	Gui.Parent = Model.Head
 	
 	-- Stats effects
-	Model.Humanoid.WalkSpeed = 0.064257 * AI.Stats.Level + 15.935743
+	Model.Humanoid.WalkSpeed = 0.064257 * AI.Stats.AgilityLevel + 15.935743
 	
 	Updates.RegisterRagdoll:Fire(Model)
 	Model:SetPrimaryPartCFrame(CFrame.new(Position))
@@ -128,9 +128,9 @@ end
 function AI.Loop()
     local Player, Distance = AI.FindNearestPlayer()
     local DistanceToSpawn = (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude
-	if Distance < (AI.Stats.AttackingDistance or 4) then
+    if Distance < (AI.Stats.AttackingDistance or 4) then
+        AI.WalkAnim:Stop() 
         if Cooldown <= 0 then 
-            AI.WalkAnim:Stop() 
             AI.DamagePlayer(Player) 
             Cooldown = 1 
         end

@@ -21,11 +21,11 @@ HealthRegenCooldowns = {}
 function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 	local PlayerStats = PlayerCurrentStats[Player]
 	if RequestType == "FETCH" then
-		local Data, FirstTime
+		local NewData, FirstTime
 		
 		if not PlayerStats then
-			Data, FirstTime = Updates.GetData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId)
-            PlayerStats = Data
+			NewData, FirstTime = Updates.GetData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId)
+            PlayerStats = NewData
 			
 			if FirstTime then -- Analytics
 				Analytics:addProgressionEvent(Player.UserId, {
@@ -35,15 +35,19 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 			end
             
             PlayerStats.EXP = PlayerStats.EXP or 0
-			PlayerStats.EXPNeeded = math.ceil(1.12^Data.Level * 125)
-			PlayerStats.MaxHealth = Data.DefenseLevel*100 + (Data.Level-1) * 50
+			PlayerStats.EXPNeeded = math.ceil(1.12^NewData.Level * 125)
+			PlayerStats.MaxHealth = NewData.DefenseLevel*100 + (NewData.Level-1) * 50
 			PlayerStats.Health = PlayerStats.MaxHealth
 			
 			HealthRegenCooldowns[Player] = 0
 			LastSaves[Player] = 0
 			PlayerCurrentStats[Player] = PlayerStats
 		end
-		
+        
+        if not PlayerStats then -- If there still isn't any data then kick the player
+            Player:Kick("Error loading data, rejoin and if it still isn't loading, please send a bug report in the discord!")
+        end
+
 		return PlayerStats, FirstTime
 		
 	elseif RequestType == "SINGLE" then
@@ -99,31 +103,33 @@ function LoadCharacter(Player, CharacterData)
 	local CharacterItems = RP.CharacterItems
 	local CharacterAppearance = CharacterData.Appearance
 
-	-- Check to see the clothes exist or just don't set it at all
-	if CharacterAppearance.Shirt then Character.Shirt.ShirtTemplate = CharacterAppearance.Shirt end
-	if CharacterAppearance.Pant then Character.Pants.PantsTemplate = CharacterAppearance.Pant end
-	if CharacterAppearance.Face then Character.Head.Face.Texture = CharacterAppearance.Face end
-	
-	-- local Hair = CharacterItems:FindFirstChild(CharacterAppearance["Hair"])
-	-- local Hair2 = CharacterItems:FindFirstChild(CharacterAppearance["Hair2"])
-	
-	-- if Hair then Character.Humanoid:AddAccessory(Hair:Clone()) end
-	-- if Hair2 then Character.Humanoid:AddAccessory(Hair2:Clone()) end
-	
-	for _,Accessory in pairs(CharacterAppearance.Accessories) do
-		Character.Humanoid:AddAccessory(CharacterItems[Accessory]:Clone())
-	end
+    if CharacterAppearance then -- Load appearance if it exists
+        -- Check to see the clothes exist or just don't set it at all
+        if CharacterAppearance.Shirt then Character.Shirt.ShirtTemplate = CharacterAppearance.Shirt end
+        if CharacterAppearance.Pant then Character.Pants.PantsTemplate = CharacterAppearance.Pant end
+        if CharacterAppearance.Face then Character.Head.Face.Texture = CharacterAppearance.Face end
 
-    pcall(function()
-        local Appearance = game.Players:GetCharacterAppearanceAsync(Player.UserId)
+        -- local Hair = CharacterItems:FindFirstChild(CharacterAppearance["Hair"])
+        -- local Hair2 = CharacterItems:FindFirstChild(CharacterAppearance["Hair2"])
 
-        for _,Part in pairs(Appearance:GetChildren()) do
-            if Part:IsA("Accessory") then
-                Part.Parent = Character
-                Part.Handle.Anchored = false
-            end
+        -- if Hair then Character.Humanoid:AddAccessory(Hair:Clone()) end
+        -- if Hair2 then Character.Humanoid:AddAccessory(Hair2:Clone()) end
+
+        for _,Accessory in pairs(CharacterAppearance.Accessories) do
+            Character.Humanoid:AddAccessory(CharacterItems[Accessory]:Clone())
         end
-    end)
+
+        pcall(function()
+            local Appearance = game.Players:GetCharacterAppearanceAsync(Player.UserId)
+
+            for _,Part in pairs(Appearance:GetChildren()) do
+                if Part:IsA("Accessory") then
+                    Part.Parent = Character
+                    Part.Handle.Anchored = false
+                end
+            end
+        end)
+    end
 
 --	if not Success then warn("Unable to get appearance for "..Player.UserId) end
 	
@@ -236,7 +242,7 @@ RP.Events.Admin.AppendData.OnServerEvent:Connect(function(Player, Level, Strengt
     PlayerCurrentStats[Player].Yen = Yen or PlayerCurrentStats[Player].Yen
     PlayerCurrentStats[Player].AttributePoints = AttributePoints or PlayerCurrentStats[Player].AttributePoints
 
-    General.StatsClient:FireClient(Player, "ALL", PlayerStats)
+    General.StatsClient:FireClient(Player, "ALL", PlayerCurrentStats[Player])
 
     SaveCurrentStats(Player)
 end)
