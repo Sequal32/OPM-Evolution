@@ -8,9 +8,10 @@ ActiveMobs = {}
 AIObjects = game:GetService("ServerStorage").AIModels
 AIUniqueLocations = workspace.AIUniqueSpawnLocations
 AIUnique = {
-    {"Kelp", AIObjects["Kelp Monster [Tiger]"], AIUniqueLocations.Kelp1},
-    {"Kelp", AIObjects["Kelp Monster [Tiger]"], AIUniqueLocations.Kelp2},
-    {"Kelp", AIObjects["Kelp Monster [Tiger]"], AIUniqueLocations.Kelp3},
+    {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp1},
+    {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp2},
+    {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp3},
+    {"VaccineMan", AIObjects.VaccineMan, AIUniqueLocations.VaccineMan}
 }
 
 -- Handling punching bags
@@ -20,7 +21,7 @@ for _,bag in pairs(workspace.PunchingBags:GetChildren()) do
 end
 
 while wait() do
-	pcall(function()
+	-- pcall(function()
 		for _,Location in pairs(workspace.AISpawnLocations:GetChildren()) do
 			if not Location.Occupied.Value then
 				
@@ -54,5 +55,5 @@ while wait() do
 				Mob.Loop()
 			end
 		end
-	end)
+	-- end)
 end

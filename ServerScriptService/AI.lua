@@ -34,7 +34,7 @@ function AI.Spawn(AIModel, Position)
 	local Position = Position or AI.PickSpawnLocation()
     
     AI.Spawnpoint = Position
-	AI.Died = false
+    AI.Died = false
 	AI.Stats = AIStats[AIName]
 	AI.Model = Model
 	
@@ -135,8 +135,8 @@ function AI.Loop()
         end
 
         AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
-    elseif Distance > 2000 then
-        AI.Model:SetPrimaryPartCFrame(AI.Spawnpoint)
+    elseif (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude > 2000 then
+        AI.Model:SetPrimaryPartCFrame(CFrame.new(AI.Spawnpoint))
     else
         AI.Model.Humanoid:MoveTo(AI.Spawnpoint) -- Stop the AI's movement
         if not AI.IdleAnim.IsPlaying then

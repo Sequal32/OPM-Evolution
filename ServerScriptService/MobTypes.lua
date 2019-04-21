@@ -29,4 +29,13 @@ MobTypes.WeakThug = {
     ["RespawnTime"] = 3
 }
 
+MobTypes.VaccineMan = {
+	["StrengthLevel"] = 300,
+	["AgilityLevel"] = 300,
+	["DefenseLevel"] = 300,
+	["StaminaLevel"] = 300,
+    ["Level"] = 300,
+    ["RespawnTime"] = 3
+}
+
 return MobTypes
