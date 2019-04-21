@@ -11,7 +11,7 @@ AIUnique = {
     {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp1},
     {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp2},
     {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp3},
-    {"VaccineMan", AIObjects.VaccineMan, AIUniqueLocations.VaccineMan}
+    {"[Boss] Vaccine Man", AIObjects.VaccineMan, AIUniqueLocations.VaccineMan}
 }
 
 -- Handling punching bags
@@ -48,7 +48,7 @@ while wait() do
 		for Index,Active in pairs(ActiveMobs) do
 			local Mob, Location = Active[1], Active[2]
 			
-			if Mob.Died then
+			if Mob.Finished then
 				table.remove(ActiveMobs, Index)
 				Location.Occupied.Value = false
 			else
