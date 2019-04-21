@@ -5,6 +5,7 @@ local RP = game:GetService("ReplicatedStorage")
 local RPF = game:GetService("ReplicatedFirst")
 local MS = game:GetService("MarketplaceService")
 local CP = game:GetService("ContentProvider")
+local TS = game:GetService("TweenService")
 
 -- Variables
 Player = game.Players.LocalPlayer
@@ -197,40 +198,20 @@ StatsFrame.StatsBG.CloseButton.MouseButton1Click:Connect(function()
 end)
 
 MainUI.MainMenu.PlayButton.MouseButton1Click:Connect(function()
-	-- Fade out main menu
-	MainUI.MainMenu.ZIndex = 5
+    Starting = true
 	local data, FirstTime = GeneralEvents.StatsServer:InvokeServer("FETCH")
-	if FirstTime then
+
+    if FirstTime then
 		beginCustomizeProcess()
-	elseif not Starting then
-		Starting = true
-		for i = 1,10 do
-			MainUI.MainMenu.BackgroundTransparency = MainUI.MainMenu.BackgroundTransparency - 0.1
-			wait()
-		end
-		MainUI.GameUI.Visible = true
-		MainUI.MainMenu.PlayButton.Visible = false
-		MainUI.MainMenu.SettingsButton.Visible = false
-		MainUI.MainMenu.CCButton.Visible = false
-		MainUI.MainMenu.NewGameButton.Visible = false
-		MainUI.MainMenu.LoadGameButton.Visible = false
-		MainUI.MainMenu.Header.Visible = false
-		
-		Startup.Stop:Fire()
-		GeneralEvents.LoadCharacter:FireServer(CurrentCharacter)
-		
-		if workspace.CurrentCamera:FindFirstChild("UI_Blur") then
-			workspace.CurrentCamera:FindFirstChild("UI_Blur"):remove()
-		end
-		wait(1)
-		for i = 1,10 do
-			MainUI.MainMenu.BackgroundTransparency = MainUI.MainMenu.BackgroundTransparency + 0.1
-			wait()
-		end	
-		MainUI.MainMenu.Visible = false
-		MainUI.MainMenu.ZIndex = 1	
-		Starting = false		
-	end
+    elseif Starting then
+        return		
+    end
+    
+    repeat wait() until not MainUI.CharacterCustomize.Visible
+
+    IntroSequence()
+
+    Starting = false
 end)
 
 MainUI.MainMenu.SettingsButton.MouseButton1Click:Connect(function()
@@ -246,7 +227,8 @@ MainUI.MainMenu.SettingsButton.MouseButton1Click:Connect(function()
 end)
 
 MainUI.MainMenu.CCButton.MouseButton1Click:Connect(function()
-	beginCustomizeProcess()
+    beginCustomizeProcess()
+    MainUI.MainMenu.Visible = true
 end)
 
 -- Bars
@@ -1226,11 +1208,8 @@ function beginCustomizeProcess() -- Run this when C button or new game button ha
 		CurrentCharacter.Appearance = CharacterAppearance
 		local Success = GeneralEvents.CharacterServer:InvokeServer("UPDATE", CurrentCharacter)
 		
-		MainUI.MainMenu.Visible = true
 		MainUI.CharacterCustomize.Visible = false
 		end)
-	
-		
 	end
 end
 
@@ -1285,17 +1264,8 @@ MainUI.GameUI.MuteButton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- New Game btn
-MainUI.MainMenu.NewGameButton.MouseButton1Click:Connect(function()
-	MainUI.MainMenu.NewGameWarning.Visible = true
-end)
-
-MainUI.MainMenu.NewGameWarning.ContinueButton.MouseButton1Click:Connect(function()
-	if Starting then return end
-	Starting = true
-	
-	ui_remotes.ResetUserData:FireServer()
-	MainUI.MainMenu.NewGameWarning.Visible = false
+function IntroSequence()
+    MainUI.MainMenu.NewGameWarning.Visible = false
 	-- Fade out main menu
 	MainUI.MainMenu.ZIndex = 5
 	for i = 1,10 do
@@ -1312,18 +1282,36 @@ MainUI.MainMenu.NewGameWarning.ContinueButton.MouseButton1Click:Connect(function
 	
 	Startup.Stop:Fire()
 	GeneralEvents.LoadCharacter:FireServer(CurrentCharacter)
-	
-	if workspace.CurrentCamera:FindFirstChild("UI_Blur") then
-		workspace.CurrentCamera:FindFirstChild("UI_Blur"):remove()
-	end
-		
-	wait(1)
+    
+    local Tween = TS:Create(workspace.CurrentCamera.UI_Blur, TweenInfo.new(0.5), {Size = 0})
+    Tween:Play()
+    Tween.Completed:wait()
+    workspace.CurrentCamera.UI_Blur:Destroy()
+    
 	for i = 1,10 do
 		MainUI.MainMenu.BackgroundTransparency = MainUI.MainMenu.BackgroundTransparency + 0.1
 		wait()
 	end	
 	MainUI.MainMenu.Visible = false
-	MainUI.MainMenu.ZIndex = 1
+    MainUI.MainMenu.ZIndex = 1
+end
+
+-- New Game btn
+MainUI.MainMenu.NewGameButton.MouseButton1Click:Connect(function()
+	MainUI.MainMenu.NewGameWarning.Visible = true
+end)
+
+MainUI.MainMenu.NewGameWarning.ContinueButton.MouseButton1Click:Connect(function()
+	if Starting then return end
+	Starting = true
+    
+    -- Allow user to customize characterdata
+    beginCustomizeProcess()
+    ui_remotes.ResetUserData:FireServer()
+
+    repeat wait() until not MainUI.CharacterCustomize.Visible
+
+	IntroSequence()
 	
 	Starting = false
 end)
