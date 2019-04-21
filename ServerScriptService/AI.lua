@@ -19,7 +19,8 @@ SpawnPositions = workspace.AISpawnLocations:GetChildren()
 
 AIModels = {
 	{"StrongThug", AIObjects.StrongThug},
-	{"WeakThug", AIObjects.WeakThug}
+	{"WeakThug", AIObjects.WeakThug},
+	{"Villain", AIObjects.Villain}
 }
 
 AIStats = require(SS.MobTypes)
@@ -63,7 +64,7 @@ function AI.Spawn(AIModel, Position)
 	Model:SetPrimaryPartCFrame(CFrame.new(Position))
 	Model.Parent = workspace
 	
-
+	AI.Finished = false
 	AI.BasicAttack = require(RP.SharedSkills.BasicAttack:Clone())
 	AI.BasicAttack.New({["Character"] = Model}, 3064549303, 3064548076, AI.Stats.Range or 2)
 	
@@ -78,9 +79,14 @@ function AI.Spawn(AIModel, Position)
         if AI.Stats.OnDied then AI.Stats.OnDied(AI.Model) end
 
         spawn(function()
-			wait(AI.Stats.RespawnTime)
+			wait(AI.Stats.DeathTime or 0)
 			AI.Model:Destroy()
 		end)
+		spawn(function()
+			wait(AI.Stats.RespawnTime or 0)
+			AI.Finished = true
+		end)
+
 		return MaxHealthValue.Value/20
     end
     

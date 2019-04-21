@@ -8,7 +8,8 @@ MobTypes.Kelp = {
 	["DefenseLevel"] = 100,
 	["StaminaLevel"] = 100,
     ["Level"] = 100,
-    ["RespawnTime"] = 0
+    ["DeathTime"] = 0,
+    ["RespawnTime"] = 8
 }
 
 MobTypes.StrongThug = {
@@ -17,7 +18,18 @@ MobTypes.StrongThug = {
 	["DefenseLevel"] = 15,
 	["StaminaLevel"] = 15,
     ["Level"] = 15,
+    ["DeathTime"] = 3,
     ["RespawnTime"] = 3
+}
+
+MobTypes.Villain = {
+	["StrengthLevel"] = 30,
+	["AgilityLevel"] = 30,
+	["DefenseLevel"] = 30,
+	["StaminaLevel"] = 30,
+    ["Level"] = 30,
+    ["DeathTime"] = 3,
+    ["RespawnTime"] = 2
 }
 
 MobTypes.WeakThug = {
@@ -26,17 +38,20 @@ MobTypes.WeakThug = {
 	["DefenseLevel"] = 5,
 	["StaminaLevel"] = 5,
     ["Level"] = 5,
-    ["RespawnTime"] = 3
+    ["DeathTime"] = 3,
+    ["RespawnTime"] = 2
 }
 
-MobTypes.VaccineMan = {
+
+MobTypes["[Boss] Vaccine Man"] = {
 	["StrengthLevel"] = 300,
 	["AgilityLevel"] = 300,
 	["DefenseLevel"] = 300,
 	["StaminaLevel"] = 300,
     ["Level"] = 300,
-    ["Range"] = 15,
-    ["RespawnTime"] = 3,
+	["Range"] = 15,
+	["DeathTime"] = 7,
+    ["RespawnTime"] = 15,
     ["AttackingDistance"] = 10
 }
 
