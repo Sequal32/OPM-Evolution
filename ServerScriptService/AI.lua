@@ -128,13 +128,15 @@ function AI.Loop()
             AI.DamagePlayer(Player) 
             Cooldown = 1 
         end
-	elseif Distance < 40 then 
+	elseif Distance < 90 then 
         if not AI.WalkAnim.IsPlaying then 
             AI.WalkAnim:Play() 
             AI.IdleAnim:Stop()
         end
 
-		AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
+        AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
+    elseif Distance > 2000 then
+        AI.Model:SetPrimaryPartCFrame(AI.Spawnpoint)
     else
         AI.Model.Humanoid:MoveTo(AI.Spawnpoint) -- Stop the AI's movement
         if not AI.IdleAnim.IsPlaying then

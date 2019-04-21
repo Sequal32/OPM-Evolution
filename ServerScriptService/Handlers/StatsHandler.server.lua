@@ -33,7 +33,8 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 					progression01 = "level0-10"
 				})
 			end
-			
+            
+            PlayerStats.EXP = PlayerStats.EXP or 0
 			PlayerStats.EXPNeeded = math.ceil(1.12^Data.Level * 125)
 			PlayerStats.MaxHealth = Data.DefenseLevel*100 + (Data.Level-1) * 50
 			PlayerStats.Health = PlayerStats.MaxHealth
@@ -226,14 +227,14 @@ end
 
 -- ADMIN PANEL
 RP.Events.Admin.AppendData.OnServerEvent:Connect(function(Player, Level, Strength, Agility, Stamina, EXP, Yen, AttributePoints)
-    PlayerCurrentStats[Player].Strength = Strength
-    PlayerCurrentStats[Player].Stamina = Stamina
-    PlayerCurrentStats[Player].Defense = Defense
-    PlayerCurrentStats[Player].Agility = Agility
-    PlayerCurrentStats[Player].Level = Level
-    PlayerCurrentStats[Player].EXP = EXP
-    PlayerCurrentStats[Player].Yen = Yen
-    PlayerCurrentStats[Player].AttributePoints = AttributePoints
+    PlayerCurrentStats[Player].Strength = Strength or PlayerCurrentStats[Player].Strength
+    PlayerCurrentStats[Player].Stamina = Stamina or PlayerCurrentStats[Player].Stamina
+    PlayerCurrentStats[Player].Defense = Defense or PlayerCurrentStats[Player].Defense
+    PlayerCurrentStats[Player].Agility = Agility or PlayerCurrentStats[Player].Agility
+    PlayerCurrentStats[Player].Level = Level or  PlayerCurrentStats[Player].Level
+    PlayerCurrentStats[Player].EXP = EXP or PlayerCurrentStats[Player].EXP
+    PlayerCurrentStats[Player].Yen = Yen or PlayerCurrentStats[Player].Yen
+    PlayerCurrentStats[Player].AttributePoints = AttributePoints or PlayerCurrentStats[Player].AttributePoints
 
     SaveCurrentStats(Player)
 end)
@@ -241,16 +242,18 @@ end)
 -- Save data upon player leaving and removes unneeded data
 function SaveCurrentStats(Player)
     local PlayerStats = PlayerCurrentStats[Player]
-    Updates.SaveData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId, {
-        ["Yen"] = PlayerStats.Yen,
-        ["EXP"] = PlayerStats.EXP,
-        ["StrengthLevel"] = PlayerStats.StrengthLevel,
-        ["StaminaLevel"] = PlayerStats.StaminaLevel,
-        ["DefenseLevel"] = PlayerStats.DefenseLevel,
-        ["AgilityLevel"] = PlayerStats.AgilityLevel,
-        ["Level"] = PlayerStats.Level,
-        ["AttributePoints"] = PlayerStats.AttributePoints
-    })
+    if PlayerStats then
+        Updates.SaveData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId, {
+            ["Yen"] = PlayerStats.Yen,
+            ["EXP"] = PlayerStats.EXP,
+            ["StrengthLevel"] = PlayerStats.StrengthLevel,
+            ["StaminaLevel"] = PlayerStats.StaminaLevel,
+            ["DefenseLevel"] = PlayerStats.DefenseLevel,
+            ["AgilityLevel"] = PlayerStats.AgilityLevel,
+            ["Level"] = PlayerStats.Level,
+            ["AttributePoints"] = PlayerStats.AttributePoints
+        })
+    end
 end
 
 game.Players.PlayerRemoving:Connect(function(Player)
@@ -293,7 +296,7 @@ while wait(0.5) do
 					PlayerStats.Health = PlayerStats.MaxHealth
 					General.StatsClient:FireClient(Player, "SINGLE", {"Health", PlayerStats.Health, true})
 					
-					LoadCharacter(Player, PlayerCharacters[Player])
+					repeat wait(2) LoadCharacter(Player, PlayerCharacters[Player]) until Player.Character
 				end)
 			end
 			
