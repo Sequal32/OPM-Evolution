@@ -21,7 +21,7 @@ for _,bag in pairs(workspace.PunchingBags:GetChildren()) do
 end
 
 while wait() do
-	-- pcall(function()
+	pcall(function()
 		for _,Location in pairs(workspace.AISpawnLocations:GetChildren()) do
 			if not Location.Occupied.Value then
 				
@@ -55,5 +55,5 @@ while wait() do
 				Mob.Loop()
 			end
 		end
-	-- end)
+	end)
 end
