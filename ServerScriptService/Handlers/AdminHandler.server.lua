@@ -9,6 +9,7 @@ BannedPlayers = Updates.GetData:Invoke("BannedPlayers") or {}
 
 RP.Events.Admin.Teleport.OnServerEvent:Connect(function(Player, TargetPlayer, TargetTPPlayer)
     if not CheckAdmin(Player) then return end
+    if not TargetTPPlayer.Character or not TargetPlayer.Character then return end
     TargetPlayer.Character:SetPrimaryPartCFrame(TargetTPPlayer.Character.PrimaryPart.CFrame)
 end)
 
@@ -25,6 +26,21 @@ RP.Events.Admin.Ban.OnServerEvent:Connect(function(Player, BanningPlayer)
         return OldData
     end)
     BanningPlayer:Kick("An admin has banned you from the server.")
+end)
+
+RP.Events.Admin.Unban.OnServerEvent:Connect(function(Player, BanningPlayer)
+    if not CheckAdmin(Player) then return end
+    local Found = false
+    Updates.UpdateData:Invoke(nil, "BannedPlayers", function(OldData)
+        for Index,BannedPlayer in pairs(OldData) do
+            if BannedPlayer == Player.UserId then
+                Found = true
+                table.remove(OldData, Index)
+                break
+            end
+        end
+        return OldData
+    end)
 end)
 
 game.Players.PlayerAdded:Connect(function(Player)

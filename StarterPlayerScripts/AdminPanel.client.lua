@@ -77,6 +77,18 @@ AdminPanel.Stamina.FocusLost:Connect(function()
     ValidateSkillNumber(AdminPanel.Stamina)
 end)
 
+AdminPanel.Yen.FocusLost:Connect(function()
+    ValidateSkillNumber(AdminPanel.Yen)
+end)
+
+AdminPanel.EXP.FocusLost:Connect(function()
+    ValidateSkillNumber(AdminPanel.EXP)
+end)
+
+AdminPanel.AttributePoints.FocusLost:Connect(function()
+    ValidateSkillNumber(AdminPanel.AttributePoints)
+end)
+
 AdminPanel.Save.Activated:Connect(function()
     if not CheckPlayer(AdminPanel.Save, "Save Eternally") then return end
     if os.time()-SaveCooldown < 0 then AdminPanel.Save.Text = "too speedy for this meat" wait(2) AdminPanel.Save.Text = "Save Eternally" end
@@ -150,6 +162,11 @@ end)
 AdminPanel.Ban.Activated:Connect(function()
     if not CheckPlayer(AdminPanel.Ban, "TO DEATH") then return end
     RP.Events.Admin.Ban:FireServer(TargetPlayer)
+end)
+
+AdminPanel.Unban.Activated:Connect(function()
+    if not CheckPlayer(AdminPanel.Unban, "MERCY") then return end
+    RP.Events.Admin.Unban:FireServer(TargetPlayer)
 end)
 
 AdminPanel.Kick.Activated:Connect(function()
