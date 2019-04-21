@@ -35,3 +35,12 @@ GeneralEvents.CharacterChange.Event:Connect(function(CharacterName)
 	CharacterScripts:FindFirstChild(CharacterName.."Client").Parent = AfterLoadedScripts
 	Reset()
 end)
+
+-- Quest Setup
+QuestGivers = {workspace.Genos}
+
+for _,Giver in pairs(QuestGivers) do
+    Giver.Head.Dialog.DialogChoiceSelected:Connect(function(Player, DialogChoice)
+        GeneralEvents.QuestProgression:FireServer("Start")
+    end)   
+end

@@ -20,6 +20,7 @@ StatsFrame = MainUI:WaitForChild("Stats")
 SettingsFrame = MainUI:WaitForChild("Settings"):WaitForChild("SettingsBG")
 AttributesFrame = StatsFrame:WaitForChild("StatsBG"):WaitForChild("AttributesFrame")
 QuestFrame = MainUI:WaitForChild("Quests"):WaitForChild("QuestsBG")
+QuestInfoFrame = MainUI:WaitForChild("QuestInfo")
 
 GeneralEvents = RP:WaitForChild("Events"):WaitForChild("General")
 
@@ -202,7 +203,8 @@ MainUI.MainMenu.PlayButton.MouseButton1Click:Connect(function()
 
     if FirstTime then
         Starting = true
-		beginCustomizeProcess()
+        beginCustomizeProcess()
+        repeat wait() until MainUI.CharacterCustomize.Visible
     elseif Starting then
         return
     end
@@ -1265,7 +1267,7 @@ function IntroSequence()
 	-- Fade out main menu
     MainUI.MainMenu.ZIndex = 5
     
-    local Tween = TS:Create(MainUI.MainMenu, TweenInfo.new(0.5), {Transparency = 1})
+    local Tween = TS:Create(MainUI.MainMenu, TweenInfo.new(0.5), {["BackgroundTransparency"] = 0})
     Tween:Play()
     Tween.Completed:wait()
 
@@ -1285,10 +1287,10 @@ function IntroSequence()
     Tween.Completed:wait()
     workspace.CurrentCamera.UI_Blur:Destroy()
 
-	for i = 1,10 do
-		MainUI.MainMenu.BackgroundTransparency = MainUI.MainMenu.BackgroundTransparency + 0.1
-		wait()
-	end	
+	local Tween = TS:Create(MainUI.MainMenu, TweenInfo.new(0.5), {["BackgroundTransparency"] = 1})
+    Tween:Play()
+    Tween.Completed:wait()
+
 	MainUI.MainMenu.Visible = false
     MainUI.MainMenu.ZIndex = 1
 end
@@ -1307,6 +1309,7 @@ MainUI.MainMenu.NewGameWarning.ContinueButton.MouseButton1Click:Connect(function
     -- Allow user to customize characterdata
     beginCustomizeProcess()
     ui_remotes.ResetUserData:FireServer()
+    repeat wait() until MainUI.CharacterCustomize.Visible
     repeat wait() until not MainUI.CharacterCustomize.Visible
 	IntroSequence()
 	
@@ -1326,6 +1329,7 @@ SettingsFrame.Customize.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = false
 
     beginCustomizeProcess()
+    repeat wait() until MainUI.CharacterCustomize.Visible
     repeat wait() until not MainUI.CharacterCustomize.Visible
 	IntroSequence()
 end)
@@ -1466,3 +1470,127 @@ end)
 
 
 -- QUEST SYSTEM
+QuestBars = QuestInfoFrame:WaitForChild("BG")
+OngoingQuests = {}
+OngoingQuestsIDs = {}
+
+AcceptButtonPositions = {
+    Left = UDim2.new(0.203, 0, 0.875, 0),
+    Center = UDim2.new(0.377, 0, 0.875, 0)
+}
+
+function FindViewIndexFromID(QuestID)
+    for Index,ID in pairs(OngoingQuestsIDs) do
+        if ID == QuestID then
+            return Index
+        end
+    end
+end
+
+function UpdateQuestView(QuestID)
+    local QuestData = OngoingQuests[QuestID]
+
+    if QuestData then
+        local Fraction = QuestData.Completed/QuestData.NeedToComplete
+        TS:Create(QuestInfoFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back), {Position = UDim2.new(0, 0, -0.1, 0)}):Play()
+        TS:Create(QuestBars.ProgressBar.Progress, TweenInfo.new(0.5), {Size = UDim2.new(Fraction, 0, 1, 0)}):Play()
+        
+        QuestInfoFrame.CompleteOutOfTotal.Text = QuestData.Completed.."/"..QuestData.NeedToComplete
+        QuestInfoFrame.PercentageComplete.Text = tostring(math.floor(Fraction*100)).."% Done"
+        QuestInfoFrame.QuestDescription.Text = string.upper("Kill "..QuestData.NeedToComplete.." "..QuestData.ReadableName)
+        QuestInfoFrame.QuestName.Text = "Kill Order"
+        QuestInfoFrame.QuestRewards.Text = QuestData.Rewards.." XP".." + "..QuestData.Rewards.." YEN"
+
+        if #OngoingQuestsIDs > 1 then
+            local Index = FindViewIndexFromID(QuestID)
+            local Connection
+            if Index == 2 then
+                QuestBars.Left.Visible = true
+                QuestBars.Right.Visible = false
+                
+                Connection = QuestBars.Left.Activated:Connect(function()
+                    UpdateQuestView(OngoingQuestsIDs[1])
+                    Connection:Disconnect()
+                end)
+            elseif Index == 1 then
+                QuestBars.Left.Visible = false
+                QuestBars.Right.Visible = true
+
+                Connection = QuestBars.Right.Activated:Connect(function()
+                    UpdateQuestView(OngoingQuestsIDs[2])
+                    Connection:Disconnect()
+                end)
+            end
+        else
+            QuestBars.Left.Visible = false
+            QuestBars.Right.Visible = false
+        end
+    else
+        if #OngoingQuestsIDs > 0 then
+            UpdateQuestView(OngoingQuestsIDs[1])
+        else
+            TS:Create(QuestInfoFrame, TweenInfo.new(0.5, Enum.EasingStyle.Bounce), {Position = UDim2.new(0, 0, 0.2, 0)}):Play()
+        end
+    end
+end
+
+GeneralEvents.QuestProgression.OnClientEvent:Connect(function(State, Data)
+    if State == "Start" then
+        local Connection, Connection2
+        QuestFrame.QuestName.Text = "Kill Order"
+        QuestFrame.QuestDescription.Text = string.upper("Kill "..Data.NeedToComplete.." "..Data.ReadableName)
+        QuestFrame.Container.EXPReward.Text = Data.Rewards.." EXP"
+        QuestFrame.Container.YenReward.Text = Data.Rewards.." Yen"
+        QuestFrame.AcceptButton.Position = AcceptButtonPositions.Left
+        QuestFrame.DeclineButton.Visible = true
+        QuestFrame.Visible = true
+
+        Connection = QuestFrame.AcceptButton.Activated:Connect(function()
+            OngoingQuests[Data.QuestID] = Data
+            table.insert(OngoingQuestsIDs, Data.QuestID)
+            UpdateQuestView(Data.QuestID)
+
+            Startup.DoneAccepting:Fire()
+            QuestFrame.Visible = false
+
+            Connection:Disconnect()
+        end)
+
+        Connection2 = QuestFrame.DeclineButton.Activated:Connect(function()
+            GeneralEvents.QuestProgression:FireServer("Cancel", {QuestID = Data.QuestID})
+            QuestFrame.Visible = false
+            Startup.DoneAccepting:Fire()
+            Connection2:Disconnect()
+        end)
+    elseif State == "Progress" then
+        OngoingQuests[Data.QuestID].Completed = Data.Completed
+        UpdateQuestView(Data.QuestID)
+    elseif State == "Complete" then
+        local QuestInfo = OngoingQuests[Data.QuestID]
+        local Connection
+
+        QuestFrame.Visible = true
+        QuestFrame.QuestName.Text = "Quest Complete"
+        QuestFrame.QuestDescription.Text = string.upper("Kill "..QuestInfo.NeedToComplete.." "..QuestInfo.ReadableName)
+        QuestFrame.Container.EXPReward.Text = QuestInfo.Rewards.." EXP"
+        QuestFrame.Container.YenReward.Text = QuestInfo.Rewards.." Yen"
+        QuestFrame.DeclineButton.Visible = false
+        QuestFrame.AcceptButton.Position = AcceptButtonPositions.Center
+
+        Connection = QuestFrame.AcceptButton.Activated:Connect(function()
+            QuestFrame.Visible = false
+            Connection:Disconnect()
+        end)
+
+        -- Remove info so that nothing updates anymore
+        OngoingQuests[Data.QuestID] = nil
+        for Index,ID in pairs(OngoingQuestsIDs) do
+            if ID == Data.QuestID then
+                table.remove(OngoingQuestsIDs, Index)
+                break
+            end
+        end
+
+        UpdateQuestView(Data.QuestID)
+    end
+end)

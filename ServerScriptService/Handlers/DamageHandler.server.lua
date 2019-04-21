@@ -11,6 +11,7 @@ PS:CreateCollisionGroup("Players")
 Misc = require(RP.General.Misc)
 
 Updates = game:GetService("ServerScriptService").Updates
+Events = RP.Events.General
 
 NumGen = Random.new()
 
@@ -106,9 +107,9 @@ function DamageNPC(Character, Damage, Perp, IsSkillAttack)
 		if not IsSkillAttack then Updates.Stats.IncrementEXP:Fire(Perp, 5) end
 	else
 		Character.Health.Value = math.clamp(Character.Health.Value-Damage, 0, math.huge)
-		
 		if Character.Health.Value <= 0 then
-			local EXPGain = Character.Die:Invoke()
+            local EXPGain = Character.Die:Invoke()
+            Updates.MobDied:Fire(Perp, Character)
 			Updates.Stats.IncrementEXP:Fire(Perp, EXPGain)
 			Updates.Stats.IncrementYen:Fire(Perp, EXPGain)
 		end
@@ -122,7 +123,6 @@ end
 function DoDamageCharacters(CharacterArray, Value, AttackingPlayer)
     for _,Array in pairs(CharacterArray) do
         local Character, Type = Array[1], Array[2]
-
         if Type == "Player" and Character ~= AttackingPlayer.Character then
             DamagePlayer(game.Players:GetPlayerFromCharacter(Character), Value, AttackingPlayer)
             DamageIndicator(Character.PrimaryPart.Position, Value)

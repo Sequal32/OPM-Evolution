@@ -97,6 +97,10 @@ function Updates.HealthChange.OnInvoke(Player, Change)  -- RETURNS WHETHER THE P
 	return false
 end
 
+function Updates.GetPlayerData.OnInvoke(Player)
+    return PlayerCurrentStats[Player]
+end
+
 -- LOADING CHARACTER
 function LoadCharacter(Player, CharacterData)
 	local Character = RP.BlankCharacter:Clone()

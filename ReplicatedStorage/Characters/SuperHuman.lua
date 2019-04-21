@@ -152,7 +152,7 @@ function SuperHuman.RangedPunch(TargetPosition)
 end
 
 function SuperHuman.RockSmash(LookVector, NumberOfRocks)
-	local StartCFrame = PrimaryPart.CFrame + LookVector
+	local StartCFrame = PrimaryPart.CFrame
 	local RingStartCFrame = PrimaryPart.CFrame * CFrame.Angles(math.rad(90), 0, 0) - Vector3.new(0, 3, 0)
 	local Parts = {}
 	
