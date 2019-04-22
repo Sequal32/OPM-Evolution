@@ -8,7 +8,7 @@ ShockwaveObject = game:GetService("ServerStorage").Resources.Shockwave
 Offsets = {3, -3}
 
 function Smash(Character, TargetPlayer)
-    Character:SetPrimaryPartCFrame(TargetPlayer.Character.PrimaryPart.CFrame+Vector3.new(Offsets[NumGen:NextInteger(1, 2)], 0, Offsets[NumGen:NextInteger(1, 2)]))
+    Character:SetPrimaryPartCFrame(TargetPlayer.Character.PrimaryPart.CFrame+Vector3.new(Offsets[NumGen:NextInteger(1, 2)], 2, Offsets[NumGen:NextInteger(1, 2)]))
 
     local Shockwave = ShockwaveObject:Clone()
     Shockwave:SetPrimaryPartCFrame(CFrame.new(Character.PrimaryPart.Position-Vector3.new(0, 0.5, 0), TargetPlayer.Character.PrimaryPart.Position))

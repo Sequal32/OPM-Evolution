@@ -283,7 +283,7 @@ function Stats.SuperHuman.RangedPunch.Cooldown()
 end
 
 function Stats.SuperHuman.Jump.ChargeMaxHeight()
-	return 10 + GetTenthPercentage("AgilityLevel") * 90 -- Base of 10, max of 100 -> scales to 90 + 10 
+	return 30 + GetTenthPercentage("AgilityLevel") * 90 -- Base of 30, max of 120 -> scales to 90 + 30 
 end
 
 function Stats.SuperHuman.Jump.AirMaxHeight()

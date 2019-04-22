@@ -99,9 +99,9 @@ function AI.Spawn(AIModel, Position)
 		return MaxHealthValue.Value/20
     end
     
-    -- AI.Model.Health:GetPropertyOnChangedSignal("Value"):Connect(function()
-    --     AI.Aggro = true
-    -- end)
+    HealthValue:GetPropertyChangedSignal("Value"):Connect(function()
+        AI.Aggro = true
+    end)
 end
 
 function AI.SpawnRandomModel(Position)
@@ -143,7 +143,7 @@ function AI.Loop(DeltaTime)
             AI.DamagePlayer(Player) 
             Cooldown = 0.7
         end
-	elseif Distance < 90 then 
+	elseif Distance < 90 or AI.Aggro then 
         if not AI.WalkAnim.IsPlaying then 
             AI.WalkAnim:Play() 
             AI.IdleAnim:Stop()
@@ -152,17 +152,19 @@ function AI.Loop(DeltaTime)
         AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
     elseif DistanceToSpawn > 2000 then
         AI.Model:SetPrimaryPartCFrame(CFrame.new(AI.Spawnpoint))
-    elseif DistanceToSpawn > 25 then
+    elseif DistanceToSpawn > 50 then
         if not AI.WalkAnim.IsPlaying then 
             AI.WalkAnim:Play() 
             AI.IdleAnim:Stop()
         end
-        AI.Model.Humanoid:MoveTo(AI.Spawnpoint) -- Stop the AI's movement
+		AI.Model.Humanoid:MoveTo(AI.Spawnpoint) -- Stop the AI's movement
+		AI.Aggro = false
     else
         if not AI.IdleAnim.IsPlaying then
 			AI.WalkAnim:Stop()
 			AI.IdleAnim:Play()
 		end
+		AI.Model.Health.Value = math.clamp(AI.Model.Health.Value+AI.Model.MaxHealth.Value*0.02, 0, AI.Model.MaxHealth.Value)
 	end
 	
     Cooldown = Cooldown-DeltaTime

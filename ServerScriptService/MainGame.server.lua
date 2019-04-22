@@ -21,7 +21,7 @@ for _,bag in pairs(workspace.PunchingBags:GetChildren()) do
 end
 
 while wait() do
-	-- pcall(function()
+	pcall(function()
 		for _,Location in pairs(workspace.AISpawnLocations:GetChildren()) do
 			if not Location.Occupied.Value then
 				
@@ -53,9 +53,9 @@ while wait() do
 				table.remove(ActiveMobs, Index)
 				Location.Occupied.Value = false
 			else
-                spawn(Mob.Loop, LastCall-CurrentTime)
+				spawn(Mob.Loop, LastCall-CurrentTime)
                 ActiveMobs[Index][3] = CurrentTime
 			end
 		end
-	-- end)
+	end)
 end

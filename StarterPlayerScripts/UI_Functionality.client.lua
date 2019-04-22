@@ -1243,24 +1243,21 @@ end)
 
 local songs = {342393207, 1595651255}
 
-wait(1)
-
-local sound = Instance.new("Sound")
+local sound = Instance.new("Sound", workspace)
 
 function NewSong()
 	sound.SoundId = "rbxassetid://"..songs[Random.new():NextInteger(1, #songs)]
-	
-	game:GetService("SoundService"):PlayLocalSound(sound)
 	sound:Play()
-	
 	sound.Ended:connect(NewSong)
 end
 
-MainUI.GameUI.MuteButton.MouseButton1Click:Connect(function()
+NewSong()
+
+MainUI.GameUI.MuteButton.Activated:Connect(function()
 	if sound.IsPlaying == true then
 		sound:Pause()
 	else
-		sound:Play()
+		sound:Resume()
 	end
 end)
 
@@ -1557,13 +1554,15 @@ GeneralEvents.QuestProgression.OnClientEvent:Connect(function(State, Data)
             Startup.DoneAccepting:Fire()
             QuestFrame.Visible = false
 
-            Connection:Disconnect()
+			Connection:Disconnect()
+			Connection2:Disconnect()
         end)
 
         Connection2 = QuestFrame.DeclineButton.Activated:Connect(function()
             GeneralEvents.QuestProgression:FireServer("Cancel", {QuestID = Data.QuestID})
             QuestFrame.Visible = false
-            Startup.DoneAccepting:Fire()
+			Startup.DoneAccepting:Fire()
+			Connection:Disconnect()
             Connection2:Disconnect()
         end)
     elseif State == "Progress" then

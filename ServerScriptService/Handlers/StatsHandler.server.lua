@@ -35,7 +35,7 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 			end
             
             PlayerStats.EXP = PlayerStats.EXP or 0
-			PlayerStats.EXPNeeded = math.ceil(1.12^NewData.Level * 125)
+			PlayerStats.EXPNeeded = math.ceil(1.11^NewData.Level * 125)
 			PlayerStats.MaxHealth = NewData.DefenseLevel*100 + (NewData.Level-1) * 100
 			PlayerStats.Health = PlayerStats.MaxHealth
 			
@@ -166,7 +166,7 @@ Updates.Stats.IncrementEXP.Event:Connect(function(Player, EXP)
 		-- Grant Level
 		PlayerStats.EXP = PlayerStats.EXP-PlayerStats.EXPNeeded
 		PlayerStats.Level = PlayerStats.Level+1
-		PlayerStats.EXPNeeded = math.ceil(1.12^PlayerStats.Level * 125)
+		PlayerStats.EXPNeeded = math.ceil(1.11^PlayerStats.Level * 125)
 		PlayerStats.MaxHealth = PlayerStats.DefenseLevel*100 + (PlayerStats.Level-1) * 100
 		
 		-- Analytics

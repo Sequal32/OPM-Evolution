@@ -10,7 +10,7 @@ MobTypes.Kelp = {
 	StaminaLevel = 100,
     Level = 100,
     DeathTime = 0,
-    RespawnTime = 8
+    RespawnTime = 4
 }
 
 MobTypes.StrongThug = {
@@ -52,7 +52,7 @@ MobTypes["[Boss] Vaccine Man"] = {
     Level = 300,
 	Range = 15,
 	DeathTime = 7,
-    RespawnTime = 15,
+    RespawnTime = 7.5,
     AttackingDistance = 10,
     Skills = {
         {

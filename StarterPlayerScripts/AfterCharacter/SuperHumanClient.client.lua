@@ -132,8 +132,14 @@ function UnlockBurrow(SkillName)
 		end,
 		["Info"] = Misc.GetCameraLookVector,
 		["MainCallback"] = function(Burrowing)
-			if not StatsA.SubtractStaminaWithChecking(StatsB.Burrow.StaminaRate()) or Player.Character.PrimaryPart.Position.Y > 40 then Burrow.Cancel() end
---			if not Burrowing then Burrow.Cancel() end
+			local Part, Position = Misc.FindCollisionPart(Player.Character.PrimaryPart, Player.Character.PrimaryPart-Vector3.new(0, -20, 0))
+			local Grounded = true
+			if Part and math.abs(Player.Character.PrimaryPart.Position.Y-Position.Y) < 10 then
+				Grounded = false
+			elseif not Part then
+				Grounded = false
+			end
+			if not StatsA.SubtractStaminaWithChecking(StatsB.Burrow.StaminaRate()) and StatsA.Current.Stamina/StatsA.Max.Stamina > 0.2 and Grounded then Burrow.Cancel() end
 		end
 	})
 end
