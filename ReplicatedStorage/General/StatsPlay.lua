@@ -70,9 +70,6 @@ Stats.Connection = Events.StatsClient.OnClientEvent:connect(function(Type, Data)
 	elseif Type == "SINGLE" then -- Data[1] is the name of the stat, Data[2] is the value of the stat
 		if Data[1] == "Health" and Data[3] then -- If the character finished dying
 			Stats.Current.Stamina = Stats.Max.Stamina
-		elseif Data[1] == "Yen" then
-			Stats.Current[Data[1]] = Data[2]
-			UIEvents.ChangeYen:Fire(Data[2]) 
 		else
 			Stats.Current[Data[1]] = Data[2]
 		end

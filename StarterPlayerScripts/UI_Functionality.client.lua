@@ -127,7 +127,9 @@ spawn(function()
 	MainUI.MainMenu.PlayButton:TweenPosition(UDim2.new(0.472, 0,0.45, 0),"Out","Quad",0.3)
 	MainUI.MainMenu.SettingsButton:TweenPosition(UDim2.new(0.54, 0,0.45, 0),"Out","Quad",0.3)
 	MainUI.MainMenu.NewGameButton:TweenPosition(UDim2.new(0.443, 0,0.631, 0),"Out","Quad",0.3)
-	MainUI.MainMenu.LoadGameButton:TweenPosition(UDim2.new(0.443, 0,0.705, 0),"Out","Quad",0.3)
+    MainUI.MainMenu.LoadGameButton:TweenPosition(UDim2.new(0.443, 0,0.705, 0),"Out","Quad",0.3)
+    -- General stuff
+    SettingsFrame.CurrentVersion.Text = "V "..GeneralEvents.GetServerVersion:InvokeServer()
 end)
 
 -- Buttons

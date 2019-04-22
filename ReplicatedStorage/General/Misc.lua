@@ -45,7 +45,6 @@ function _S.GetCharacterParts(Character)
 		
 		for _,Part in pairs(Character:GetDescendants()) do
 			if Part:IsA("BasePart") then
-				CS:AddTag(Part, "ProjectileIgnore")
 				table.insert(Array, Part)
 			end
 		end
@@ -97,12 +96,14 @@ function _S.FindCollisionPart(Origin, TargetPosition, Character, Range)
 	return workspace:FindPartOnRayWithIgnoreList(ray, Ignore)
 end
 
-function _S.FindCharactersInVicinity(Position, Size)
+function _S.FindCharactersInVicinity(Position, Size, OnlyPlayers)
     Characters = {}
 
-    for _,Character in pairs(CS:GetTagged("AttackableMob")) do
-        if (Character.PrimaryPart.Position-Position).magnitude <= Size then
-            table.insert(Characters, {Character, "Mob"})
+    if not OnlyPlayers then
+        for _,Character in pairs(CS:GetTagged("AttackableMob")) do
+            if (Character.PrimaryPart.Position-Position).magnitude <= Size then
+                table.insert(Characters, {Character, "Mob"})
+            end
         end
     end
 

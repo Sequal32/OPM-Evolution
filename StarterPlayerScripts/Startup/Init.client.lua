@@ -41,6 +41,8 @@ QuestGivers = {workspace.Genos}
 
 for _,Giver in pairs(QuestGivers) do
     Giver.Head.Dialog.DialogChoiceSelected:Connect(function(Player, DialogChoice)
-        GeneralEvents.QuestProgression:FireServer("Start")
+        if DialogChoice.Name == "Quest" then
+            GeneralEvents.QuestProgression:FireServer("Start")
+        end
     end)   
 end

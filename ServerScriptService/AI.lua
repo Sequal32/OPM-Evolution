@@ -64,12 +64,20 @@ function AI.Spawn(AIModel, Position)
 	Model:SetPrimaryPartCFrame(CFrame.new(Position))
 	Model.Parent = workspace
 	
-	AI.Finished = false
+    AI.Finished = false
 	AI.BasicAttack = require(RP.SharedSkills.BasicAttack:Clone())
 	AI.BasicAttack.New({["Character"] = Model}, 3064549303, 3064548076, AI.Stats.Range or 2)
 	
 	AI.WalkAnim = LoadAnimation(Model.Humanoid, 507777826)
-	AI.IdleAnim = LoadAnimation(Model.Humanoid, 507766388)
+    AI.IdleAnim = LoadAnimation(Model.Humanoid, 507766388)
+    
+    -- Put inital cooldown stuff
+    AI.Cooldowns = {} -- For skills
+    if AI.Stats.Skills then
+        for Index,Skill in pairs(AI.Stats.Skills) do
+            AI.Cooldowns[Index] = Skill.Cooldown
+        end
+    end
 	
 	function AI.Model.Die.OnInvoke()
 		AI.Model.Humanoid.Health = 0
@@ -156,7 +164,19 @@ function AI.Loop()
 		end
 	end
 	
-	Cooldown = Cooldown-0.1
+    Cooldown = Cooldown-0.1
+
+    for Index,Cooldown in pairs(AI.Cooldowns) do
+        AI.Cooldowns[Index] = Cooldown-0.1
+    end
+    
+    if not AI.Stats.Skills or not Player then return end
+    for Index,Skill in pairs(AI.Stats.Skills) do
+        if AI.Cooldowns[Index] <= 0 and Distance <= AI.Stats.Skills[Index].Range then
+            AI.Cooldowns[Index] = AI.Stats.Skills[Index].Cooldown
+            AI.Stats.Skills[Index].Function(AI.Model, Player)
+        end
+    end
 end
 
 return AI

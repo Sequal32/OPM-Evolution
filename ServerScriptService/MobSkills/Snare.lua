@@ -1,0 +1,3 @@
+function SnarePlayer()
+
+end

@@ -19,13 +19,15 @@ function GetQuestForLevel(Player, Level)
     for _,Quest in pairs(QuestStats) do
         -- Detect if the player has already accepted a quest with the same mob
         local SameMob
+        local NumberOfQuests = 0
         for _,QuestA in pairs(OnGoingPlayerQuests[Player]) do
             if QuestA.ModelName == Quest.ModelName then
                 SameMob = true
             end
+            NumberOfQuests = NumberOfQuests+1
         end
 
-        if Level >= Quest.StartLevel and #OnGoingPlayerQuests[Player] < 2 and not SameMob then
+        if Level >= Quest.StartLevel and NumberOfQuests < 2 and not SameMob then
             local NeedToComplete = NumGen:NextInteger(5, Quest.MaximumNumber)
             local QuestID = HS:GenerateGUID(false)
 
