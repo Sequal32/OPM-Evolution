@@ -57,7 +57,7 @@ MobTypes["[Boss] Vaccine Man"] = {
     Skills = {
         {
             Cooldown = 7.5,
-            Range = 10,
+            Range = 50,
             Function = require(SS.MobSkills.Smash)
         }
     }

@@ -72,6 +72,7 @@ function AI.Spawn(AIModel, Position)
     AI.IdleAnim = LoadAnimation(Model.Humanoid, 507766388)
     
     -- Put inital cooldown stuff
+
     AI.Cooldowns = {} -- For skills
     if AI.Stats.Skills then
         for Index,Skill in pairs(AI.Stats.Skills) do
@@ -133,14 +134,14 @@ function AI.DamagePlayer(Player)
 	Updates.HealthChange:Invoke(Player, -AI.Stats.Level*2.5)
 end
 
-function AI.Loop()
+function AI.Loop(DeltaTime)
     local Player, Distance = AI.FindNearestPlayer()
     local DistanceToSpawn = (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude
     if Distance < (AI.Stats.AttackingDistance or 4) then
         AI.WalkAnim:Stop() 
         if Cooldown <= 0 then 
             AI.DamagePlayer(Player) 
-            Cooldown = 1 
+            Cooldown = 0.7
         end
 	elseif Distance < 90 then 
         if not AI.WalkAnim.IsPlaying then 
@@ -164,12 +165,12 @@ function AI.Loop()
 		end
 	end
 	
-    Cooldown = Cooldown-0.1
+    Cooldown = Cooldown-DeltaTime
 
     for Index,Cooldown in pairs(AI.Cooldowns) do
-        AI.Cooldowns[Index] = Cooldown-0.1
+        AI.Cooldowns[Index] = Cooldown-DeltaTime
     end
-    
+
     if not AI.Stats.Skills or not Player then return end
     for Index,Skill in pairs(AI.Stats.Skills) do
         if AI.Cooldowns[Index] <= 0 and Distance <= AI.Stats.Skills[Index].Range then

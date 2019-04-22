@@ -21,7 +21,7 @@ for _,bag in pairs(workspace.PunchingBags:GetChildren()) do
 end
 
 while wait() do
-	pcall(function()
+	-- pcall(function()
 		for _,Location in pairs(workspace.AISpawnLocations:GetChildren()) do
 			if not Location.Occupied.Value then
 				
@@ -29,7 +29,7 @@ while wait() do
 				Mob.SpawnRandomModel(Location.Position)
 				Location.Occupied.Value = true
 				
-				table.insert(ActiveMobs, {Mob, Location})
+				table.insert(ActiveMobs, {Mob, Location, tick()})
 			end
 		end
 		
@@ -41,19 +41,21 @@ while wait() do
 				Mob.Spawn(Data, Loc.Position)
 				Loc.Occupied.Value = true
 				
-				table.insert(ActiveMobs, {Mob, Loc})
+				table.insert(ActiveMobs, {Mob, Loc, tick()})
 			end
 		end
 		
 		for Index,Active in pairs(ActiveMobs) do
-			local Mob, Location = Active[1], Active[2]
+            local Mob, Location, LastCall = Active[1], Active[2], Active[3]
+            local CurrentTime = tick()
 			
 			if Mob.Finished then
 				table.remove(ActiveMobs, Index)
 				Location.Occupied.Value = false
 			else
-				Mob.Loop()
+                spawn(Mob.Loop, LastCall-CurrentTime)
+                ActiveMobs[Index][3] = CurrentTime
 			end
 		end
-	end)
+	-- end)
 end

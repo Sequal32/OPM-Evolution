@@ -36,7 +36,7 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
             
             PlayerStats.EXP = PlayerStats.EXP or 0
 			PlayerStats.EXPNeeded = math.ceil(1.12^NewData.Level * 125)
-			PlayerStats.MaxHealth = NewData.DefenseLevel*100 + (NewData.Level-1) * 50
+			PlayerStats.MaxHealth = NewData.DefenseLevel*100 + (NewData.Level-1) * 100
 			PlayerStats.Health = PlayerStats.MaxHealth
 			
 			HealthRegenCooldowns[Player] = 0
@@ -62,7 +62,8 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 		-- Apply attributes
 		for Attribute,Value in pairs(Data) do
 			PlayerCurrentStats[Player][Attribute] = PlayerCurrentStats[Player][Attribute]+Value 
-		end
+        end
+        PlayerStats.MaxHealth = PlayerStats.DefenseLevel*100 + (PlayerStats.Level-1) * 100
 		PlayerStats.AttributePoints = PlayerStats.AttributePoints-TotalSpending
 		General.StatsClient:FireClient(Player, "ALL", PlayerStats)
 		PlayerCurrentStats[Player] = PlayerStats
@@ -166,7 +167,7 @@ Updates.Stats.IncrementEXP.Event:Connect(function(Player, EXP)
 		PlayerStats.EXP = PlayerStats.EXP-PlayerStats.EXPNeeded
 		PlayerStats.Level = PlayerStats.Level+1
 		PlayerStats.EXPNeeded = math.ceil(1.12^PlayerStats.Level * 125)
-		PlayerStats.MaxHealth = PlayerStats.DefenseLevel*100 + (PlayerStats.Level-1) * 50
+		PlayerStats.MaxHealth = PlayerStats.DefenseLevel*100 + (PlayerStats.Level-1) * 100
 		
 		-- Analytics
 		if PlayerStats.Level % 10 == 0 then

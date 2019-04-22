@@ -1538,6 +1538,8 @@ end
 
 GeneralEvents.QuestProgression.OnClientEvent:Connect(function(State, Data)
     if State == "Start" then
+        if #OngoingQuestsIDs >= 2 then return end -- redundancy checking
+
         local Connection, Connection2
         QuestFrame.QuestName.Text = "Kill Order"
         QuestFrame.QuestDescription.Text = string.upper("Kill "..Data.NeedToComplete.." "..Data.ReadableName)

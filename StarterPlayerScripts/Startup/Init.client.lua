@@ -8,6 +8,7 @@ local GeneralEvents = RP.Events.General
 -- Some location constants
 local PlayerScripts = Player.PlayerScripts
 local AfterLoadedScripts = PlayerScripts.AfterCharacter
+local Startup = PlayerScripts.Startup
 local CharacterScripts = PlayerScripts.Characters
 local CurrentClass = "SuperHuman"
 -- Enable scripts
@@ -37,11 +38,17 @@ GeneralEvents.CharacterChange.Event:Connect(function(CharacterName)
 end)
 
 -- Quest Setup
+local DoneAccepting = true
 QuestGivers = {workspace.Genos}
+
+Startup.DoneAccepting.Event:Connect(function()
+    DoneAccepting = true
+end)
 
 for _,Giver in pairs(QuestGivers) do
     Giver.Head.Dialog.DialogChoiceSelected:Connect(function(Player, DialogChoice)
-        if DialogChoice.Name == "Quest" then
+        if DialogChoice.Name == "Quest" and DoneAccepting then
+            DoneAccepting = false
             GeneralEvents.QuestProgression:FireServer("Start")
         end
     end)   

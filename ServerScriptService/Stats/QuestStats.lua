@@ -1,7 +1,7 @@
 QuestStats = {
     {
         CapLevel = 160, 
-        StartLevel = 125,
+        StartLevel = 60,
         ModelName = "VaccineMan", 
         ReadableName = "Vaccine Men", 
         Type = "High Level", 
@@ -10,7 +10,7 @@ QuestStats = {
     },
     {
         CapLevel = 125,
-        StartLevel = 25,
+        StartLevel = 30,
         ModelName = "KelpMonster",
         ReadableName = "Kelp Monsters",
         Type = "High Level",
@@ -37,7 +37,7 @@ QuestStats = {
     },
     {
         CapLevel = 10,
-        StartLevel = 0,
+        StartLevel = 5,
         ModelName = "WeakThug",
         ReadableName = "Weak Thugs",
         Type = "Low Level",
