@@ -143,7 +143,6 @@ function DoDamagePart(Hit, Value, Position, AttackingPlayer, IsSkillAttack)
 	if Player then -- Detects player
 		
         if Player ~= AttackingPlayer and VerifyHit(Position, Player) then 
-            print("Verified")
 			DamagePlayer(Player, Value, AttackingPlayer)
 		end
 		

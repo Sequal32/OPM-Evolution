@@ -153,6 +153,11 @@ function LoadCharacter(Player, CharacterData)
 	PlayerCharacters[Player] = CharacterData
 	
 	Player.Character = Character
+
+	spawn(function()
+		print(Player.Character)
+		while not Player.Character do wait(5) LoadCharacter(Player, PlayerCharacters[Player]) end
+	end)
 end
 
 General.LoadCharacter.OnServerEvent:Connect(LoadCharacter)

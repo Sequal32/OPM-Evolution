@@ -20,10 +20,13 @@ Boulder = Resources.Boulder
 Rock = Resources.Rock
 AimObject = Resources.Sight
 ShockwaveObject = Resources.Shockwave
+Camera = workspace.CurrentCamera
 
 -- Requires
 Misc = require(RP.General.Misc)
 Explosion = require(Effects.Explosion)
+CamShake = require(Effects.CameraShaker)
+CamShakeInstance = require(Effects.CameraShakeInstance)
 BasicAttack = SharedSkills.BasicAttack
 Jump = SharedSkills.Jump
 Sprint = SharedSkills.Sprint
@@ -156,7 +159,14 @@ function SuperHuman.RockSmash(LookVector, NumberOfRocks)
 	local RingStartCFrame = PrimaryPart.CFrame * CFrame.Angles(math.rad(90), 0, 0) - Vector3.new(0, 3, 0)
 	local Parts = {}
 	
-	if Self then Events.RockSmash:FireServer(LookVector, NumberOfRocks, SuperHuman) end
+	if Self then 
+		Events.RockSmash:FireServer(LookVector, NumberOfRocks, SuperHuman) 
+		-- Camera shake effect
+		RockSmashPreset = CamShakeInstance.new(5, 1, 0, 3)
+		RockSmashPreset.PositionInfluence = Vector3.new(0.5, 0.5, 0.5)
+		RockSmashPreset.RotationInfluence = Vector3.new(0.25, 0.25, 0.25)
+		SuperHuman.Shaker:Shake(RockSmashPreset)
+	end
 	
 	for i=0, 2, 1 do
 		local Ring = Resources["Ring"..i]:Clone()
@@ -167,7 +177,7 @@ function SuperHuman.RockSmash(LookVector, NumberOfRocks)
 		TS:Create(Ring, TweenInfo.new(1), {["Transparency"] = 1, ["CFrame"] = Ring.CFrame+Vector3.new(0, 0.5, 0)}):Play()
 		wait()
 	end
-	
+
 	for i=1, NumberOfRocks, 1 do
 		local Rock = Rock:Clone()
 		local BricksTouching = {}
@@ -213,7 +223,6 @@ function SuperHuman.SpawnRock(CF)
 end
 
 function SuperHuman.EndBurrow()
-	local Camera = workspace.CurrentCamera
 	Camera.CameraType = Enum.CameraType.Custom
 	Camera.CameraSubject = Character.Humanoid
 	-- Find spot to put the character back
@@ -295,9 +304,14 @@ function SuperHuman.EndBullet()
 	BV.Velocity = Vector3.new()
 	PrimaryPart.Velocity = Vector3.new()
 	PrimaryPart.RotVelocity = Vector3.new()
+
+	BulletPreset = CamShakeInstance.new(7, 3, 0, 1)
+	BulletPreset.PositionInfluence = Vector3.new(2, 2, 2)
+	BulletPreset.RotationInfluence = Vector3.new(0.5, 0.5, 0.5)
+	SuperHuman.Shaker:Shake(BulletPreset)
 	
 	if Self then RP.Events.General.DoDamage:FireServer("Radius", true, PrimaryPart.Position, 30, Stats.SuperHuman.RockSmash.Damage()) end
-	
+
 	wait(0.2)
 	BV:Destroy()
 	PrimaryPart.Anchored = false
@@ -438,6 +452,11 @@ function SuperHuman.New(Plr)
 	
 	SuperHuman.BasicAttack = require(BasicAttack:Clone())
 	SuperHuman.BasicAttack.New(Plr, 3064549303, 3064548076)
+
+	SuperHuman.Shaker = CamShake.new(Enum.RenderPriority.Camera.Value, function(ShakeCFrame)
+		Camera.CFrame = Camera.CFrame * ShakeCFrame
+	end)
+	SuperHuman.Shaker:Start()
 end
 
 return SuperHuman

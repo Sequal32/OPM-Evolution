@@ -35,7 +35,7 @@ local BasicAttack = require(Trigger:Clone())
 		end 
 		}, {
 		["Main"] = SuperHuman.BasicAttack.Use,
-})
+}, true)
 
 function UnlockPunch(SkillName)
 	local Punch = require(Trigger:Clone())
@@ -51,7 +51,7 @@ function UnlockPunch(SkillName)
 		["MainCallback"] = function()
 			if not StatsA.SubtractStaminaWithChecking(StatsB.Punch.StaminaRate()) then Punch.Cancel() end
 		end
-	})
+	}, true)
 end
 
 function UnlockRangedPunch(SkillName)
@@ -65,7 +65,7 @@ function UnlockRangedPunch(SkillName)
 		["EnableCallback"] = function()
 			if not StatsA.SubtractStaminaWithChecking(StatsB.RangedPunch.StaminaRate()) then RangedPunch.Cancel() end
 		end
-	})
+	}, true)
 end
 
 --function UnlockBoulderToss()
@@ -96,7 +96,7 @@ function UnlockRockSmash(SkillName)
 	["EnableCallback"] = function()
 		if not StatsA.SubtractStaminaWithChecking(StatsB.RockSmash.StaminaRate()) then RockSmash.Cancel() end
 	end
-	})
+	}, true)
 end
 
 function UnlockJump(SkillName)
@@ -109,7 +109,7 @@ function UnlockJump(SkillName)
 		["DisableCallback"] = function(Height)
 			if not StatsA.SubtractStaminaWithChecking(StatsB.Jump.StaminaRate(SuperHuman.Jump.CurrentHeight)) then Jump.Cancel() end
 		end
-	})
+	}, true)
 end
 
 function UnlockSprint(SkillName)
@@ -118,7 +118,7 @@ function UnlockSprint(SkillName)
 		["Enable"] = SuperHuman.Sprint.Enable,
 		["Disable"] = SuperHuman.Sprint.Disable,
 		["Info"] = StatsA.All.Sprint.Speed
-	})
+	}, true)
 end
 
 function UnlockBurrow(SkillName)
@@ -141,7 +141,7 @@ function UnlockBurrow(SkillName)
 			end
 			if not StatsA.SubtractStaminaWithChecking(StatsB.Burrow.StaminaRate()) and StatsA.Current.Stamina/StatsA.Max.Stamina > 0.2 and Grounded then Burrow.Cancel() end
 		end
-	})
+	}, false)
 end
 
 function UnlockBullet(SkillName)
@@ -156,7 +156,7 @@ function UnlockBullet(SkillName)
 		["EnableCallback"] = function()
 			if Player.Character.PrimaryPart.Position.Y > 40 then Bullet.Cancel() end
 		end
-	})
+	}, false)
 end
 
 Player.Character.Humanoid.Died:Connect(function()

@@ -133,15 +133,12 @@ end
 
 RP.UI_Data.UI_Remotes.ResetUserData.OnServerEvent:Connect(function(Player)
 	local Data = GetData(StatsDS, "PlayerKeyAlphaZulu_"..Player.UserId)
-	local Yen = 0
 	local Key = "PlayerKeyAlphaZulu_"..Player.UserId
 	
-	if Data then
-		Yen = Data.Yen
-	end
-	
 	local NewStats = StatsData
-	NewStats.Yen = Yen
+	if Data then
+		NewStats.Yen = Data.Yen
+	end
 	
 	SaveData(StatsDS, Key, NewStats)
 	CreateNewData("Character", Key)

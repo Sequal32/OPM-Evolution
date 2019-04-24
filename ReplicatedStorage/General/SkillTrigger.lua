@@ -37,7 +37,7 @@ function Hold(ActionName, InputState, InputObj)
 		end)
 		
 		while Trigger.Held do
-			if Trigger.Cancelling then DisableHold() break end
+			if Trigger.Cancelling then if Trigger.DisableIfCancel then DisableHold() end break end
 			Trigger.TriggeredAt = os.time()
 			Trigger.FunctionMainCallback(Trigger.FunctionMain(Trigger.FunctionGetInfo()), Trigger.LastCall)
 			Trigger.LastCall = wait(Trigger.CooldownMain())
@@ -120,7 +120,7 @@ function Trigger.Cancel()
 	Trigger.Cancelling = true
 end
 
-function Trigger.New(Name, Input, CreateTouchButton, TriggerType, Cooldowns, Functions)
+function Trigger.New(Name, Input, CreateTouchButton, TriggerType, Cooldowns, Functions, DisableIfCancel)
     CAS:UnbindAction(Name) -- Make sure we're overwriting the previous action if there is one
 
 	if TriggerType == "Hold" then
@@ -149,6 +149,7 @@ function Trigger.New(Name, Input, CreateTouchButton, TriggerType, Cooldowns, Fun
 	Trigger.Cancelling = false
 	Trigger.LastCall = 0
 	Trigger.TriggeredAt = 0
+	Trigger.DisableIfCancel = DisableIfCancel
 	
 --	spawn(function()
 --		local ui = script.Skill1:Clone()

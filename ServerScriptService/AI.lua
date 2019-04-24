@@ -99,8 +99,10 @@ function AI.Spawn(AIModel, Position)
 		return MaxHealthValue.Value/20
     end
     
-    HealthValue:GetPropertyChangedSignal("Value"):Connect(function()
-        AI.Aggro = true
+	HealthValue:GetPropertyChangedSignal("Value"):Connect(function()
+		-- local Distance, Player = AI.FindNearestPlayer()
+		-- if Distance then AI.Aggro = true end
+		AI.Aggro = true
     end)
 end
 
@@ -136,23 +138,24 @@ end
 
 function AI.Loop(DeltaTime)
     local Player, Distance = AI.FindNearestPlayer()
-    local DistanceToSpawn = (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude
-    if Distance < (AI.Stats.AttackingDistance or 4) then
-        AI.WalkAnim:Stop() 
-        if Cooldown <= 0 then 
-            AI.DamagePlayer(Player) 
-            Cooldown = 0.7
-        end
-	elseif Distance < 90 or AI.Aggro then 
-        if not AI.WalkAnim.IsPlaying then 
-            AI.WalkAnim:Play() 
-            AI.IdleAnim:Stop()
-        end
+	local DistanceToSpawn = (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude
+	if Player and Distance < (AI.Stats.AttackingDistance or 4) then
+		AI.WalkAnim:Stop() 
+		if Cooldown <= 0 then 
+			AI.DamagePlayer(Player) 
+			Cooldown = 0.7
+		end
+	elseif Player and (Distance < 90 or AI.Aggro) and DistanceToSpawn < 300 then 
+		if not AI.WalkAnim.IsPlaying then 
+			AI.WalkAnim:Play() 
+			AI.IdleAnim:Stop()
+		end
 
-        AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
+		AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
     elseif DistanceToSpawn > 2000 then
-        AI.Model:SetPrimaryPartCFrame(CFrame.new(AI.Spawnpoint))
-    elseif DistanceToSpawn > 50 then
+		AI.Model:SetPrimaryPartCFrame(CFrame.new(AI.Spawnpoint))
+		AI.Aggro = false
+	elseif DistanceToSpawn > 20 then
         if not AI.WalkAnim.IsPlaying then 
             AI.WalkAnim:Play() 
             AI.IdleAnim:Stop()
@@ -160,11 +163,8 @@ function AI.Loop(DeltaTime)
 		AI.Model.Humanoid:MoveTo(AI.Spawnpoint) -- Stop the AI's movement
 		AI.Aggro = false
     else
-        if not AI.IdleAnim.IsPlaying then
-			AI.WalkAnim:Stop()
-			AI.IdleAnim:Play()
-		end
 		AI.Model.Health.Value = math.clamp(AI.Model.Health.Value+AI.Model.MaxHealth.Value*0.02, 0, AI.Model.MaxHealth.Value)
+		AI.Aggro = false
 	end
 	
     Cooldown = Cooldown-DeltaTime
