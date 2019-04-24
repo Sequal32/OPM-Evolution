@@ -9,6 +9,7 @@ Analytics = require(SD.GameAnalytics)
 
 NumGen = Random.new()
 
+-- Paths
 Updates = SS.Updates
 Events = RP.Events
 General = Events.General

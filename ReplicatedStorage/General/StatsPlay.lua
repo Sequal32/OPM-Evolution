@@ -7,6 +7,7 @@ RP = game:GetService("ReplicatedStorage")
 UIEvents = RP.UI_Data.UI_Events
 Events = RP.Events.General
 Player = game.Players.LocalPlayer
+SkillDisableTime = Player.PlayerScripts:WaitForChild("RunningVars"):WaitForChild("SkillDisableTime")
 
 repeat wait() until Player.Character
 
@@ -77,7 +78,10 @@ Stats.Connection = Events.StatsClient.OnClientEvent:connect(function(Type, Data)
 		UpdateUIStats()
 	end
 end)
-
+-- Handle server disabling client skills
+General.DisableSkills.OnClientEvent:Connect(function(Length)
+    SkillDisableTime.Value = Length
+end)
 -- Stat functions
 
 function Stats.ChangeHealth(Value)
@@ -303,7 +307,8 @@ spawn(function()
 	while true do
 		local StaminaAmountIncrease = Stats.Max.Stamina * 0.025
 		Stats.Current.Stamina = Stats.Current.Stamina+StaminaAmountIncrease <= Stats.Max.Stamina and math.ceil(Stats.Current.Stamina+StaminaAmountIncrease) or Stats.Max.Stamina
-		Events.UnlockLevel:Fire(Stats.Current.Level)
+        Events.UnlockLevel:Fire(Stats.Current.Level)
+        SkillDisableTime.Value = SkillDisableTime.Value-0.5
 		wait(0.5)
 	end
 end)

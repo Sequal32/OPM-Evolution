@@ -1,6 +1,9 @@
 local Trigger = {}
 
 CAS = game:GetService("ContextActionService")
+Player = game.Players.LocalPlayer
+
+SkillDisableTime = Player.PlayerScripts:WaitForChild("RunningVars"):WaitForChild("SkillDisableTime")
 
 function EmptyFunction()
 	return 0
@@ -16,11 +19,16 @@ function DisableToggle()
 	Trigger.FunctionDisableCallback(Trigger.FunctionDisable())
 end
 
+function SkillAvailable()
+    return SkillDisableTime.Value <= 0
+end
+
 function Hold(ActionName, InputState, InputObj)
 	local CurrentTime = os.time()
 	if InputState == Enum.UserInputState.Begin then
-		Trigger.Cancelling = false
-		if CurrentTime-Trigger.TriggeredAt < Trigger.CooldownLength() then return end
+        Trigger.Cancelling = false
+        
+		if SkillIsAvailable() or CurrentTime-Trigger.TriggeredAt < Trigger.CooldownLength() then return end
 		
 		Trigger.FunctionEnableCallback()
 		spawn(function() Trigger.FunctionEnable(Trigger.FunctionGetInfo()) end)
@@ -51,9 +59,9 @@ end
 
 function HoldOnce(ActionName, InputState, InputObj)
 	local CurrentTime = os.time()
-	if InputState == Enum.UserInputState.Begin then
+    if InputState == Enum.UserInputState.Begin then
 		Trigger.Cancelling = false
-		if CurrentTime-Trigger.TriggeredAt < Trigger.CooldownLength() then return end
+		if SkillIsAvailable() or CurrentTime-Trigger.TriggeredAt < Trigger.CooldownLength() then return end
 
 		Trigger.FunctionEnableCallback(Trigger.FunctionEnable(Trigger.FunctionGetInfo()))
 		
@@ -97,7 +105,7 @@ function Press(ActionName, InputState, InputObj)
 		local CurrentTime = os.time()
 		Trigger.Cancelling = false
 		
-		if CurrentTime-Trigger.TriggeredAt > Trigger.CooldownLength() then
+		if SkillIsAvailable() or CurrentTime-Trigger.TriggeredAt > Trigger.CooldownLength() then
 			Trigger.FunctionEnableCallback(Trigger.FunctionEnable())
 	
 			if Trigger.Cancelling then return end
@@ -150,14 +158,6 @@ function Trigger.New(Name, Input, CreateTouchButton, TriggerType, Cooldowns, Fun
 	Trigger.LastCall = 0
 	Trigger.TriggeredAt = 0
 	Trigger.DisableIfCancel = DisableIfCancel
-	
---	spawn(function()
---		local ui = script.Skill1:Clone()
---		while wait(1) do
---			ui.Parent = game.Players.LocalPlayer.PlayerGui.MainUI.Cooldowns
---			ui.Text = Name..": ".. math.clamp(math.floor(Trigger.CooldownLength()-(os.time()-Trigger.TriggeredAt)), 0, math.huge)
---		end
---	end)
 end
 
 return Trigger
