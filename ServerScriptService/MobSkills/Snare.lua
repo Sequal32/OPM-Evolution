@@ -33,8 +33,7 @@ function Snare(Character, TargetPlayer)
     Tween:Play()
     Tween.Completed:wait()
 
-    -- local Percentage = 100-math.floor(PlayerStats.StrengthLevel/10)
-    -- if math.random(0, 100) > Percentage then return end
+    local Percentage = 100-math.floor(PlayerStats.StrengthLevel/10)
     -- Detect if the thing hit the player
     local Characters = Misc.FindCharactersInVicinity(TargetPosition, 3, true)
     -- If so disable skills and do damage
@@ -44,13 +43,14 @@ function Snare(Character, TargetPlayer)
         print(Character[1])
         if Character[1] == TargetPlayer.Character then
             TargetPlayer.Character.PrimaryPart.Anchored = true
+            TargetPlayer.Character:SetPrimaryPartCFrame(TargetPlayer.Character.PrimaryPart.CFrame)
             -- Wrap the player
             local SnareGrab = SnareGrabObject:Clone()
-            SnareGrab.CFrame = TargetPlayer.Character.PrimaryPart.CFrame*CFrame.new(0, -1.25, -2.9)
+            SnareGrab.CFrame = CFrame.new(TargetPlayer.Character.PrimaryPart.Position, TargetPlayer.Character.PrimaryPart.Position+TargetCFrame.lookVector*-1)
             SnareGrab.Parent = workspace.Projectiles
 
-            DisableSkills:FireClient(TargetPlayer, 5)
-            wait(5)
+            DisableSkills:FireClient(TargetPlayer, 5*Percentage)
+            wait(5*Percentage)
             SnareGrab:Destroy()
             TargetPlayer.Character.PrimaryPart.Anchored = false
             -- Updates.HealthChange:Invoke(game.Players:GetPlayerFromCharacter(Character[1]), -3000)

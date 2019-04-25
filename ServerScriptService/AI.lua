@@ -102,7 +102,8 @@ function AI.Spawn(AIModel, Position)
 	HealthValue:GetPropertyChangedSignal("Value"):Connect(function()
 		-- local Distance, Player = AI.FindNearestPlayer()
 		-- if Distance then AI.Aggro = true end
-		AI.Aggro = true
+        AI.Aggro = true
+        AI.Returning = false
     end)
 end
 
@@ -143,7 +144,7 @@ end
 function AI.Loop(DeltaTime)
     local Player, Distance = AI.FindNearestPlayer()
     local DistanceToSpawn = (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude
-    print(AI.Returning)
+
 	if Player and Distance < (AI.Stats.AttackingDistance or 4) then
         AI.WalkAnim:Stop()
         AI.Returning = false 
@@ -152,7 +153,7 @@ function AI.Loop(DeltaTime)
 			Cooldown = 0.7
 		end
 	elseif Player and (Distance < 90 or AI.Aggro) and (DistanceToSpawn < 300 and not AI.Returning) then 
-		if not AI.WalkAnim.IsPlaying then 
+		if not AI.WalkAnim.IsPlaying then
 			AI.WalkAnim:Play() 
 			AI.IdleAnim:Stop()
         end

@@ -87,16 +87,16 @@ function UnlockRockSmash(SkillName)
 	local RockSmash = require(Trigger:Clone())
 	RockSmash.New(SkillName, Enum.KeyCode.C, false, "Press", {
 		["Length"] = StatsB.RockSmash.Cooldown
-	}, {
-	["Main"] = SuperHuman.RockSmash,
---	["Info"] = Misc.GetTargetMousePos,
-    ["Info"] = function()
-        return Misc.GetCameraLookVector(), StatsB.RockSmash.NumberOfRocks()
-    end,
-	["EnableCallback"] = function()
-		if not StatsA.SubtractStaminaWithChecking(StatsB.RockSmash.StaminaRate()) then RockSmash.Cancel() end
-	end
-	}, true)
+        }, {
+        ["Main"] = SuperHuman.RockSmash,
+    --	["Info"] = Misc.GetTargetMousePos,
+        ["Info"] = function()
+            return Misc.GetCameraLookVector(), StatsB.RockSmash.NumberOfRocks()
+        end,
+        ["EnableCallback"] = function()
+            if not StatsA.SubtractStaminaWithChecking(StatsB.RockSmash.StaminaRate()) then RockSmash.Cancel() end
+        end
+        }, true)
 end
 
 function UnlockJump(SkillName)
