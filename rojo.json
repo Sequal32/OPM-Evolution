@@ -25,6 +25,10 @@
     "StarterPlayerScripts": {
       "path": "StarterPlayerScripts",
       "target": "StarterPlayer.StarterPlayerScripts"
+    },
+    "Events": {
+      "path": "ReplicatedStorage/Events",
+      "target": "ReplicatedStorage.Events"
     }
   }
 }

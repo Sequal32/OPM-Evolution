@@ -28,7 +28,7 @@ function Hold(ActionName, InputState, InputObj)
 	if InputState == Enum.UserInputState.Begin then
         Trigger.Cancelling = false
         
-		if SkillIsAvailable() or CurrentTime-Trigger.TriggeredAt < Trigger.CooldownLength() then return end
+		if not SkillAvailable() or CurrentTime-Trigger.TriggeredAt < Trigger.CooldownLength() then return end
 		
 		Trigger.FunctionEnableCallback()
 		spawn(function() Trigger.FunctionEnable(Trigger.FunctionGetInfo()) end)
@@ -61,7 +61,7 @@ function HoldOnce(ActionName, InputState, InputObj)
 	local CurrentTime = os.time()
     if InputState == Enum.UserInputState.Begin then
 		Trigger.Cancelling = false
-		if SkillIsAvailable() or CurrentTime-Trigger.TriggeredAt < Trigger.CooldownLength() then return end
+		if not SkillAvailable() or CurrentTime-Trigger.TriggeredAt < Trigger.CooldownLength() then return end
 
 		Trigger.FunctionEnableCallback(Trigger.FunctionEnable(Trigger.FunctionGetInfo()))
 		
@@ -105,7 +105,7 @@ function Press(ActionName, InputState, InputObj)
 		local CurrentTime = os.time()
 		Trigger.Cancelling = false
 		
-		if SkillIsAvailable() or CurrentTime-Trigger.TriggeredAt > Trigger.CooldownLength() then
+		if not SkillAvailable() or CurrentTime-Trigger.TriggeredAt > Trigger.CooldownLength() then
 			Trigger.FunctionEnableCallback(Trigger.FunctionEnable())
 	
 			if Trigger.Cancelling then return end

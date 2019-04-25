@@ -111,7 +111,11 @@ function AI.SpawnRandomModel(Position)
 end
 
 function AI.FindDistanceToPlayer(Player)
-	return (Player.Character.PrimaryPart.Position-AI.Model.PrimaryPart.Position).magnitude
+    if Player.Character.PrimaryPart and AI.Model.PrimaryPart then
+        return (Player.Character.PrimaryPart.Position-AI.Model.PrimaryPart.Position).magnitude
+    else
+        return math.huge
+    end
 end
 
 function AI.FindNearestPlayer()
@@ -138,18 +142,20 @@ end
 
 function AI.Loop(DeltaTime)
     local Player, Distance = AI.FindNearestPlayer()
-	local DistanceToSpawn = (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude
+    local DistanceToSpawn = (AI.Model.PrimaryPart.Position-AI.Spawnpoint).magnitude
+    print(AI.Returning)
 	if Player and Distance < (AI.Stats.AttackingDistance or 4) then
-		AI.WalkAnim:Stop() 
+        AI.WalkAnim:Stop()
+        AI.Returning = false 
 		if Cooldown <= 0 then 
 			AI.DamagePlayer(Player) 
 			Cooldown = 0.7
 		end
-	elseif Player and (Distance < 90 or AI.Aggro) and DistanceToSpawn < 300 then 
+	elseif Player and (Distance < 90 or AI.Aggro) and (DistanceToSpawn < 300 and not AI.Returning) then 
 		if not AI.WalkAnim.IsPlaying then 
 			AI.WalkAnim:Play() 
 			AI.IdleAnim:Stop()
-		end
+        end
 
 		AI.Model.Humanoid:MoveTo(Player.Character.PrimaryPart.Position)
     elseif DistanceToSpawn > 2000 then
@@ -160,13 +166,18 @@ function AI.Loop(DeltaTime)
             AI.WalkAnim:Play() 
             AI.IdleAnim:Stop()
         end
+        if DistanceToSpawn > 300 then
+            AI.Returning = true
+        end
 		AI.Model.Humanoid:MoveTo(AI.Spawnpoint) -- Stop the AI's movement
 		AI.Aggro = false
     else
+        AI.WalkAnim:Stop() 
 		AI.Model.Health.Value = math.clamp(AI.Model.Health.Value+AI.Model.MaxHealth.Value*0.02, 0, AI.Model.MaxHealth.Value)
 		AI.Aggro = false
 	end
-	
+    
+    -- Skills
     Cooldown = Cooldown-DeltaTime
 
     for Index,Cooldown in pairs(AI.Cooldowns) do
@@ -176,6 +187,7 @@ function AI.Loop(DeltaTime)
     if not AI.Stats.Skills or not Player then return end
     for Index,Skill in pairs(AI.Stats.Skills) do
         if AI.Cooldowns[Index] <= 0 and Distance <= AI.Stats.Skills[Index].Range then
+            AI.WalkAnim:Stop() 
             AI.Cooldowns[Index] = AI.Stats.Skills[Index].Cooldown
             AI.Stats.Skills[Index].Function(AI.Model, Player)
         end

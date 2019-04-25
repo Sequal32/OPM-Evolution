@@ -10,7 +10,14 @@ MobTypes.Kelp = {
 	StaminaLevel = 100,
     Level = 100,
     DeathTime = 0,
-    RespawnTime = 4
+    RespawnTime = 4,
+    Skills = {
+        {
+            Cooldown = 15,
+            Range = 50,
+            Function = require(SS.MobSkills.Snare)
+        }
+    }
 }
 
 MobTypes.StrongThug = {

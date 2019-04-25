@@ -1,9 +1,11 @@
-NumGen = Random.new()
+-- Paths
 Debris = game:GetService("Debris")
 Misc = require(game:GetService("ReplicatedStorage").General.Misc)
-Updates = game:GetService("ServerScriptService").Updates
-TS = game:GetService("TweenService")
 ShockwaveObject = game:GetService("ServerStorage").Resources.Shockwave
+TS = game:GetService("TweenService")
+Updates = game:GetService("ServerScriptService").Updates
+-- Variables
+NumGen = Random.new()
 
 Offsets = {3, -3}
 

@@ -11,6 +11,7 @@ AIUnique = {
     {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp1},
     {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp2},
     {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp3},
+    {"Kelp", AIObjects["KelpMonster"], AIUniqueLocations.Kelp4},
     {"[Boss] Vaccine Man", AIObjects.VaccineMan, AIUniqueLocations.VaccineMan}
 }
 
@@ -52,7 +53,7 @@ while wait() do
 			if Mob.Finished then
 				table.remove(ActiveMobs, Index)
 				Location.Occupied.Value = false
-			else
+            elseif not Mob.Died then
 				spawn(Mob.Loop, LastCall-CurrentTime)
                 ActiveMobs[Index][3] = CurrentTime
 			end

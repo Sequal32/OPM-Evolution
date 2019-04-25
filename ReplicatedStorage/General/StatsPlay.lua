@@ -79,7 +79,7 @@ Stats.Connection = Events.StatsClient.OnClientEvent:connect(function(Type, Data)
 	end
 end)
 -- Handle server disabling client skills
-General.DisableSkills.OnClientEvent:Connect(function(Length)
+Events.DisableSkills.OnClientEvent:Connect(function(Length)
     SkillDisableTime.Value = Length
 end)
 -- Stat functions

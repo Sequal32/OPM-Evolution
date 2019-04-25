@@ -127,19 +127,14 @@ function UnlockBurrow(SkillName)
 		["Enable"] = SuperHuman.StartBurrow,
 		["Main"] = SuperHuman.Burrow,
 		["Disable"] = SuperHuman.EndBurrow,
-		["EnableCallback"] = function()
-			if Player.Character.Humanoid:GetState() == Enum.HumanoidStateType.Freefall then Burrow.Cancel() end
-		end,
-		["Info"] = Misc.GetCameraLookVector,
+        ["Info"] = Misc.GetCameraLookVector,
+        ["EnableCallback"] = function()
+            if not Part or math.abs(Player.Character.PrimaryPart.Position.Y-Position.Y) > 10 then Burrow.Cancel() end
+        end,
 		["MainCallback"] = function(Burrowing)
 			local Part, Position = Misc.FindCollisionPart(Player.Character.PrimaryPart, Player.Character.PrimaryPart-Vector3.new(0, -20, 0))
 			local Grounded = true
-			if Part and math.abs(Player.Character.PrimaryPart.Position.Y-Position.Y) < 10 then
-				Grounded = false
-			elseif not Part then
-				Grounded = false
-			end
-			if not StatsA.SubtractStaminaWithChecking(StatsB.Burrow.StaminaRate()) and StatsA.Current.Stamina/StatsA.Max.Stamina > 0.2 and Grounded then Burrow.Cancel() end
+			if not StatsA.SubtractStaminaWithChecking(StatsB.Burrow.StaminaRate()) and StatsA.Current.Stamina/StatsA.Max.Stamina > 0.2 then Burrow.Cancel() end
 		end
 	}, false)
 end

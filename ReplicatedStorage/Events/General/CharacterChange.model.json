@@ -1,4 +1,4 @@
 {
     "Name": "CharacterChange",
-    "ClassName": "RemoteEvent"
+    "ClassName": "BindableEvent"
 }
