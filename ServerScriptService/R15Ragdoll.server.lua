@@ -1,13 +1,23 @@
 --Put in ServerScriptService
-
+RP = game:GetService("ReplicatedStorage")
 SS = game:GetService("ServerScriptService")
 CS = game:GetService("CollectionService")
 
+Modules = SS.Modules
+
+FindNearestPlayer = require(Modules.FindNearestPlayer)
+Misc = require(RP.Misc)
+
 function RegisterCharacter(character, player)
 	character:WaitForChild("Humanoid").Died:connect(function()
-		
-	character.UpperTorso:SetNetworkOwner(player)
-	character.UpperTorso.Velocity = character.PrimaryPart.CFrame.lookVector*-100
+    
+    local Player = player or FindNearestPlayer(character.PrimaryPart.Position) 
+    
+    for _,Part in pairs(Misc.GetCharacterParts(character)) do
+        Part:SetNetworkOwner(Player)
+    end
+
+	character.UpperTorso.Velocity = character.PrimaryPart.CFrame.lookVector*-50
 
 	function recurse(root,callback,i)
 		i= i or 0

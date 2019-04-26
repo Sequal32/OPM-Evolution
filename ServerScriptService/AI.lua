@@ -10,6 +10,7 @@ NumGen = Random.new()
 
 --Paths
 Updates = SS.Updates
+Modules = SS.Modules
 AIObjects = SD.AIModels
 Resources = RP.Resources.General
 
@@ -23,7 +24,9 @@ AIModels = {
 	{"Villain", AIObjects.Villain}
 }
 
+-- Requires
 AIStats = require(SS.MobTypes)
+FindNearestPlayer = require(Modules.FindNearestPlayer)
 LoadAnimation = require(RP.General.LoadAnimation)
 
 function AI.PickSpawnLocation()
@@ -107,32 +110,13 @@ function AI.Spawn(AIModel, Position)
     end)
 end
 
+
 function AI.SpawnRandomModel(Position)
 	AI.Spawn(AIModels[NumGen:NextInteger(1, #AIModels)], Position)
 end
 
-function AI.FindDistanceToPlayer(Player)
-    if Player.Character.PrimaryPart and AI.Model.PrimaryPart then
-        return (Player.Character.PrimaryPart.Position-AI.Model.PrimaryPart.Position).magnitude
-    else
-        return math.huge
-    end
-end
-
 function AI.FindNearestPlayer()
-	local ClosestDistance, ClosestPlayer = math.huge, nil
-	for _,player in pairs(Players:GetChildren()) do
-		if player and player.Character and player.Character.PrimaryPart then
-			local Distance = AI.FindDistanceToPlayer(player)
-			
-			if Distance < ClosestDistance and player.Character.Humanoid.Health ~= 0 then
-				ClosestDistance = Distance
-				ClosestPlayer = player
-			end
-		end
-	end
-	
-	return ClosestPlayer, ClosestDistance
+    return FindNearestPlayer(AI.Model.PrimaryPart.Position)
 end
 
 function AI.DamagePlayer(Player)

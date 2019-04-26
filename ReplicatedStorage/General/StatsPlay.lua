@@ -45,8 +45,6 @@ end
 
 -- ACTUAL
 Stats.All = {["BasicAttack"] = {}, ["Sprint"] = {}}
-Stats.Cyborg = {["Pellets"] = {}, ["Blast"] = {}, ["Hover"] = {}, ["Jump"] = {}}
-Stats.Ninja = {["Slash"] = {}, ["Shuriken"] = {}, ["Dash"] = {}, ["Jump"] = {}}
 Stats.SuperHuman = {["RangedPunch"] = {}, ["Punch"] = {}, ["Blast"] = {}, ["BoulderToss"] = {}, ["Jump"] = {}, ["RockSmash"] = {}, ["Burrow"] = {}, ["Bullet"] = {}}
 
 Stats.Max = {
@@ -135,98 +133,6 @@ end
 function Stats.All.Sprint.Speed()
 	return 0.064257 * Stats.Current.AgilityLevel + 15.935743
 end
---
---function Stats.All.Sprint.Speed()
-----	return 16
---end
-
--- Cyborg Stats
-
-function Stats.Cyborg.Pellets.StaminaRate() 
-	return 5 + GetTenthPercentage("AgilityLevel") * 0.5 -- 0.5 stamina increase every 10 levels
-end
-
-function Stats.Cyborg.Pellets.Cooldown()
---	return 0.25 * 1.1 * GetTenthPercentage("AgilityLevel") -- 1.1 increase to base of 0.25 every 10 levels
-	return 0.2
-end
-
-function Stats.Cyborg.Pellets.Damage()
-	return RNGCorrected(2 * Stats.Current.StrengthLevel)
-end 
-
-function Stats.Cyborg.Hover.Speed()
-	return (GetTenthPercentage("AgilityLevel")+1) * 1.1 * 35, (GetTenthPercentage("AgilityLevel")+1) * 1.1 * 10 -- Lateral speed increases at 1.1x with a base of 30, vertical speed increases at 1.1x with a base of 10
-end
-
-function Stats.Cyborg.Hover.StaminaRate()
-	return 10
-end
-
-function Stats.Cyborg.Blast.Cooldown()
-	return 15-((Stats.Current.AgilityLevel/Stats.Max.AgilityLevel)*5 + (Stats.Current.StaminaLevel/Stats.Max.StaminaLevel)*5)
-end
-
-function Stats.Cyborg.Blast.StaminaRate()
-	return Stats.Max.Stamina*0.9
-end
-
-function Stats.Cyborg.Blast.Damage()
-	return RNGCorrected(12.5 * Stats.Current.StrengthLevel)
-end
-
-function Stats.Cyborg.Jump.ChargeMaxHeight()
-	return 10 + GetTenthPercentage("AgilityLevel") * 90 -- Base of 10, max of 100 -> scales to 90 + 10 
-end
-
-function Stats.Cyborg.Jump.AirMaxHeight()
-	return GetTenthPercentage("AgilityLevel") * 20 -- Base of 5, max of 20 -> scales to 15 + 5
-end
-
-function Stats.Cyborg.Jump.StaminaRate(Height)
-	return math.floor(0.1 * Height/Stats.Cyborg.Jump.ChargeMaxHeight() * Stats.Max.Stamina)
-end
-
--- Ninja Stats
-function Stats.Ninja.Slash.HitsRequired()
-	return 5 + GetFifthPercentage("AgilityLevel") * -1 -- Reduces hits required by 1 at every 1/5th of the max level
-end
-
-function Stats.Ninja.Slash.Damage()
-	return RNGCorrected(4 * Stats.Current.StrengthLevel)
-end
-
-function Stats.Ninja.Shuriken.StaminaRate() 
-	return 5 + GetTenthPercentage("AgilityLevel") * 0.5 -- 0.5 stamina increase every 10 levels
-end
-
-function Stats.Ninja.Shuriken.Cooldown()
-	return 0.3
-end
-
-function Stats.Ninja.Shuriken.Damage()
-	return RNGCorrected(8 * Stats.Current.StrengthLevel)
-end
-
-function Stats.Ninja.Dash.StaminaRate()
-	return 50
-end
-
-function Stats.Ninja.Shuriken.PelletRate()
-	return 0.25 * 1.1 * 10 * GetTenthPercentage("AgilityLevel") -- 1.1 increase to base of 0.25 every 10 levels
-end
-
-function Stats.Ninja.Jump.ChargeMaxHeight()
-	return 10 + GetTenthPercentage("AgilityLevel") * 90 -- Base of 10, max of 100 -> scales to 90 + 10 
-end
-
-function Stats.Ninja.Jump.AirMaxHeight()
-	return GetTenthPercentage("AgilityLevel") * 20 -- Base of 5, max of 20 -> scales to 15 + 5
-end
-
-function Stats.Ninja.Jump.StaminaRate(Height)
-	return 0.1 * Height/Stats.Ninja.Jump.ChargeMaxHeight() * Stats.Max.Stamina
-end
 
 -- Superhuman Stats
 
@@ -241,18 +147,6 @@ end
 function Stats.SuperHuman.Punch.Damage()
 	return RNGCorrected(2.7 * Stats.Current.StrengthLevel)
 end
-
---function Stats.SuperHuman.BoulderToss.StaminaRate()
---	return 150
---end
---
---function Stats.SuperHuman.BoulderToss.Cooldown()
---	return 15 + GetTenthPercentage("StaminaLevel") * -3.75 + GetTenthPercentage("StrengthLevel") * -3.75
---end
---
---function Stats.SuperHuman.BoulderToss.Damage()
---	return RNGCorrected(30 * Stats.Current.StrengthLevel)
---end
 
 function Stats.SuperHuman.Burrow.StaminaRate()
 	return Stats.Max.Stamina*0.02
