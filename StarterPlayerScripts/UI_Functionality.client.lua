@@ -1292,6 +1292,9 @@ function IntroSequence()
 
 	MainUI.MainMenu.Visible = false
     MainUI.MainMenu.ZIndex = 1
+
+    -- INIT SOME STUFF
+    QuestInfoFrame.Visible = true
 end
 
 -- New Game btn
@@ -1536,6 +1539,13 @@ end
 GeneralEvents.QuestProgression.OnClientEvent:Connect(function(State, Data)
     if State == "Start" then
         if #OngoingQuestsIDs >= 2 then return end -- redundancy checking
+
+        if Data.Ongoing then
+            OngoingQuests[Data.QuestID] = Data
+            table.insert(OngoingQuestsIDs, Data.QuestID)
+            UpdateQuestView(Data.QuestID)
+            return
+        end
 
         local Connection, Connection2
         QuestFrame.QuestName.Text = "Kill Order"

@@ -33,6 +33,8 @@ function GetQuestForLevel(Player, Level)
 
             OnGoingPlayerQuests[Player][QuestID] = {
                 ModelName = Quest.ModelName, 
+                ReadableName = Quest.ReadableName,
+                Type = Quest.Type,
                 Completed = 0, 
                 NeedToComplete = NeedToComplete, 
                 Rewards = math.floor(Quest.BaseRewards*NeedToComplete)
@@ -80,4 +82,38 @@ Updates.MobDied.Event:Connect(function(Perp, Mob)
             end
         end
     end
+end)
+
+game.Players.PlayerAdded:Connect(function(Player)
+    local Data = Updates.GetData:Invoke("Quests", Player)
+    if not Data then return end
+
+    for _,Quest in pairs(Data) do
+        local QuestID = HS:GenerateGUID(false)
+        OnGoingPlayerQuests[Player] = {}
+        OnGoingPlayerQuests[Player][QuestID] = Quest
+
+        Events.QuestProgression:FireClient(Player, "Start", {
+            Type = Quest.Type,
+            Rewards = Quest.Rewards,
+            ReadableName = Quest.ReadableName,
+            Completed = Quest.Completed,
+            NeedToComplete = Quest.NeedToComplete,
+            Ongoing = true,
+            QuestID = QuestID
+        })
+
+    end
+end)
+
+game.Players.PlayerRemoving:Connect(function(Player)
+    local CurrentQuests = {}
+
+    for _,Quest in pairs(OnGoingPlayerQuests[Player]) do
+        table.insert(CurrentQuests, Quest)
+    end
+
+    OnGoingPlayerQuests[Player] = nil
+
+    Updates.SaveData:Invoke("Quests", Player, CurrentQuests)
 end)

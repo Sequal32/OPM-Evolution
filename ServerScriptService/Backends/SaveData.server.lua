@@ -8,6 +8,13 @@ StatsDS = DS:GetDataStore("Stats")
 CharacterDS = DS:GetDataStore("Characters")
 HistoryDS = DS:GetDataStore("PurchaseHistory")
 
+Datastores = {
+    Stats = DS:GetDataStore("Stats"),
+    Character = DS:GetDataStore("Characters"),
+    History = DS:GetDataStore("PurchaseHistory"),
+    Quests = DS:GetDataStore("PlayerQuests")
+}
+
 Updates = SD.Updates
 
 StatsData = {
@@ -101,34 +108,34 @@ function CreateNewData(Type, Key)
 	end
 end
 
-Updates.GetData.OnInvoke = function(DatastoreName, Key)
-	local Datastore = (DatastoreName == "Stats" and StatsDS) or (DatastoreName == "Character" and CharacterDS) or (DatastoreName == "History" and HistoryDS) or DS:GetGlobalDataStore()
+Updates.GetData.OnInvoke = function(DatastoreName, Player)
+    local Datastore = Datastores[DatastoreName]
 	if not Datastore then return nil end
 	
-	local Data = GetData(Datastore, Key)
+	local Data = GetData(Datastore, "PlayerKeyAlphaZulu_"..Player.UserId)
 --	local Data
 
 	if Data then
 		return Data
 	else
-		return CreateNewData(DatastoreName, Key), true -- Returns data along with whether a new data was created
+		return CreateNewData(DatastoreName, "PlayerKeyAlphaZulu_"..Player.UserId), true -- Returns data along with whether a new data was created
 	end
 end
 
-Updates.SaveData.OnInvoke = function(DatastoreName, Key, Data)
-	local Datastore = (DatastoreName == "Stats" and StatsDS) or (DatastoreName == "Character" and CharacterDS) or (DatastoreName == "History" and HistoryDS) or DS:GetGlobalDataStore()
+Updates.SaveData.OnInvoke = function(DatastoreName, Player, Data)
+	local Datastore = Datastores[DatastoreName]
 	
 	if not Datastore then return nil end
 	
-	return SaveData(Datastore, Key, Data)
+	return SaveData(Datastore, "PlayerKeyAlphaZulu_"..Player.UserId, Data)
 end
 
-Updates.UpdateData.OnInvoke = function(DatastoreName, Key, Function)
-	local Datastore = (DatastoreName == "Stats" and StatsDS) or (DatastoreName == "Character" and CharacterDS) or (DatastoreName == "History" and HistoryDS) or DS:GetGlobalDataStore()
+Updates.UpdateData.OnInvoke = function(DatastoreName, Player, Function)
+	local Datastore = Datastores[DatastoreName]
 	
 	if not Datastore then return nil end
 	
-	return UpdateData(Datastore, Key, Function)
+	return UpdateData(Datastore, "PlayerKeyAlphaZulu_"..Player.UserId, Function)
 end
 
 RP.UI_Data.UI_Remotes.ResetUserData.OnServerEvent:Connect(function(Player)

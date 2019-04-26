@@ -25,7 +25,7 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 		local NewData, FirstTime
 		
 		if not PlayerStats then
-			NewData, FirstTime = Updates.GetData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId)
+			NewData, FirstTime = Updates.GetData:Invoke("Stats", Player)
             PlayerStats = NewData
 			
 			if FirstTime then -- Analytics
@@ -74,9 +74,9 @@ end
 
 function General.CharacterServer.OnServerInvoke(Player, RequestType, Data)
 	if RequestType == "FETCH" then
-		return Updates.GetData:Invoke("Character", "PlayerKeyAlphaZulu_"..Player.UserId)
+		return Updates.GetData:Invoke("Character", Player)
 	elseif RequestType == "UPDATE" then
-		return Updates.SaveData:Invoke("Character", "PlayerKeyAlphaZulu_"..Player.UserId, Data)
+		return Updates.SaveData:Invoke("Character", Player, Data)
 	end
 end
 
@@ -262,7 +262,7 @@ end)
 function SaveCurrentStats(Player)
     local PlayerStats = PlayerCurrentStats[Player]
     if PlayerStats then
-        Updates.SaveData:Invoke("Stats", "PlayerKeyAlphaZulu_"..Player.UserId, {
+        Updates.SaveData:Invoke("Stats", Player, {
             ["Yen"] = PlayerStats.Yen,
             ["EXP"] = PlayerStats.EXP,
             ["StrengthLevel"] = PlayerStats.StrengthLevel,
