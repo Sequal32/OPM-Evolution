@@ -17,10 +17,10 @@ end
 
 function ImplementStats(Data)
 	Stats.Max.Health = Data.MaxHealth
-	Stats.Max.Stamina = Data.StaminaLevel*10
-	Stats.Current.Damage = Data.StrengthLevel*10
-	Stats.Current.Speed = 16+Data.AgilityLevel
-	
+	Stats.Max.Stamina = Data.StaminaLevel
+	Stats.Current.Damage = Data.StrengthLevel
+    Stats.Current.Speed = Data.AgilityLevel * 0.000043 + 32
+    	
 	for stat,value in pairs(Data) do
 		Stats.Current[stat] = value
 	end
