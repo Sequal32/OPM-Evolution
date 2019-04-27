@@ -1,6 +1,6 @@
 local DS = game:GetService("DataStoreService")
 local RP = game:GetService("ReplicatedStorage")
-local SS SD = game:GetService("ServerScriptService")
+local SS = game:GetService("ServerScriptService")
 
 Events = RP.Events.General
 
@@ -25,7 +25,8 @@ StatsData = {
 	["DefenseLevel"] = 1,
 	["AgilityLevel"] = 1,
 	["AttributePoints"] = 0,
-	["Level"] = 1
+	["Level"] = 1,
+	["Relations"] = {}
 }
 
 CharacterData = {
