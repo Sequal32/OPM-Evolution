@@ -10,12 +10,11 @@ NumGen = Random.new()
 Events = RP.Events.General
 Updates = SS.Updates
 QuestStats = require(SS.Stats.QuestStats)
+QuestGiverStats = require(SS.Stats.QuestGiverStats)
 
 OnGoingPlayerQuests = {}
 
-function GetQuestForLevel(Player, Level)
-    if not OnGoingPlayerQuests[Player] then OnGoingPlayerQuests[Player] = {} end
-
+function GiveKillQuest(Player, Level)
     for _,Quest in pairs(QuestStats) do
         -- Detect if the player has already accepted a quest with the same mob
         local SameMob
@@ -53,10 +52,16 @@ function GetQuestForLevel(Player, Level)
     end
 end
 
+function GetQuestForLevel(Player, Level, QuestGiver)
+    if not OnGoingPlayerQuests[Player] then OnGoingPlayerQuests[Player] = {} end
+
+    
+end
+
 Events.QuestProgression.OnServerEvent:Connect(function(Player, RequestType, Data)
     if RequestType == "Start" then
         local PlayerData = Updates.GetPlayerData:Invoke(Player)
-        GetQuestForLevel(Player, PlayerData.Level)
+        GetQuestForLevel(Player, PlayerData.Level, QuestGiver)
     elseif RequestType == "Cancel" then
         OnGoingPlayerQuests[Player][Data.QuestID] = nil
     end

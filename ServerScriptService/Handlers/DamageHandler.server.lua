@@ -86,8 +86,15 @@ function DamageIndicator(Position, Value)
 	local Damage = SS.HitDamage:Clone()
 	Damage.Parent = workspace.Projectiles
 	Damage.Position = Position
-    Damage.UI.Damage.Text = Value
-    TS:Create(Damage, TweenInfo.new(1), {["Position"] = Damage.Position + Vector3.new(1, 2, 1) * NumGen:NextNumber(-2, 2)}):Play()
+
+	if Value > 0 then	
+		Damage.UI.Damage.Text = Value
+	else
+		Damage.UI.Damage.Text = "Blocked"
+		Damage.UI.Damage.TextColor3 = Color3.fromRGB(0, 0, 255)
+	end
+
+	TS:Create(Damage, TweenInfo.new(1), {["Position"] = Damage.Position + Vector3.new(1, 2, 1) * NumGen:NextNumber(-2, 2)}):Play()
 	TS:Create(Damage.UI.Damage, TweenInfo.new(1), {["TextTransparency"] = 1}):Play()
 	Debris:AddItem(Damage, 2)
 end

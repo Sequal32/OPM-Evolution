@@ -49,7 +49,7 @@ for _,Giver in pairs(QuestGivers) do
     Giver.Head.Dialog.DialogChoiceSelected:Connect(function(Player, DialogChoice)
         if DialogChoice.Name == "Quest" and DoneAccepting then
             DoneAccepting = false
-            GeneralEvents.QuestProgression:FireServer("Start")
+            GeneralEvents.QuestProgression:FireServer("Start", Giver)
         end
     end)   
 end
