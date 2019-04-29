@@ -1,6 +1,7 @@
 local DS = game:GetService("DataStoreService")
 local RP = game:GetService("ReplicatedStorage")
 local SS = game:GetService("ServerScriptService")
+local SD = game:GetService("ServerStorage")
 
 Events = RP.Events.General
 
@@ -15,7 +16,7 @@ Datastores = {
     Quests = DS:GetDataStore("PlayerQuests")
 }
 
-Updates = SD.Updates
+Updates = SS.Updates
 
 StatsData = {
 	["Yen"] = 0,

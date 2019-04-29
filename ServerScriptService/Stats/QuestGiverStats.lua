@@ -10,3 +10,6 @@ TierQuests = {
     -- Second Tier
     {"Kill"}
 }
+
+
+return QuestGiverStats

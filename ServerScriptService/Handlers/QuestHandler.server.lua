@@ -11,57 +11,16 @@ Events = RP.Events.General
 Updates = SS.Updates
 QuestStats = require(SS.Stats.QuestStats)
 QuestGiverStats = require(SS.Stats.QuestGiverStats)
+QuestKill = require(SS.Modules.QuestKill)
 
 OnGoingPlayerQuests = {}
-
-function GiveKillQuest(Player, Level)
-    for _,Quest in pairs(QuestStats) do
-        -- Detect if the player has already accepted a quest with the same mob
-        local SameMob
-        local NumberOfQuests = 0
-        for _,QuestA in pairs(OnGoingPlayerQuests[Player]) do
-            if QuestA.ModelName == Quest.ModelName then
-                SameMob = true
-            end
-            NumberOfQuests = NumberOfQuests+1
-        end
-
-        if Level >= Quest.StartLevel and NumberOfQuests < 2 and not SameMob then
-            local NeedToComplete = NumGen:NextInteger(5, Quest.MaximumNumber)
-            local QuestID = HS:GenerateGUID(false)
-
-            OnGoingPlayerQuests[Player][QuestID] = {
-                ModelName = Quest.ModelName, 
-                ReadableName = Quest.ReadableName,
-                Type = Quest.Type,
-                Completed = 0, 
-                NeedToComplete = NeedToComplete, 
-                Rewards = math.floor(Quest.BaseRewards*NeedToComplete)
-            }
-
-            Events.QuestProgression:FireClient(Player, "Start", {
-                Type = Quest.Type,
-                Rewards = math.floor(Quest.BaseRewards*NeedToComplete),
-                ReadableName = Quest.ReadableName,
-                Completed = 0,
-                NeedToComplete = NeedToComplete,
-                QuestID = QuestID
-            })
-            break
-        end
-    end
-end
-
-function GetQuestForLevel(Player, Level, QuestGiver)
-    if not OnGoingPlayerQuests[Player] then OnGoingPlayerQuests[Player] = {} end
-
-    
-end
 
 Events.QuestProgression.OnServerEvent:Connect(function(Player, RequestType, Data)
     if RequestType == "Start" then
         local PlayerData = Updates.GetPlayerData:Invoke(Player)
-        GetQuestForLevel(Player, PlayerData.Level, QuestGiver)
+        -- GetQuestForLevel(Player, PlayerData.Level, QuestGiver)
+        local NewQuest = QuestKill.New(Data, function() end, PlayerData.Level, OnGoingPlayerQuests[Player] or {})
+        print(NewQuest.NeedToComplete, NewQuest.ObjectiveName, NewQuest.Type, NewQuest.Rewards)
     elseif RequestType == "Cancel" then
         OnGoingPlayerQuests[Player][Data.QuestID] = nil
     end
