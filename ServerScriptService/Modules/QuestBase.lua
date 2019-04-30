@@ -1,36 +1,52 @@
 Quest = {}
 Quest.__index = Quest
 
+RP = game:GetService("ReplicatedStorage")
 SS = game:GetService("ServerScriptService")
 HS = game:GetService("HttpService")
+
+Updates = SS.Updates
 
 Quest.QuestStats = require(SS.Stats.QuestStats)
 Quest.QuestGiverStats = require(SS.Stats.QuestGiverStats)
 
-function Quest.New(QuestGiver, CompletedCallback, QuestsArray, OngoingQuests)
+function Quest.NewFromGenerator(QuestGiver, CompletedCallback, Level,  QuestsArray, OngoingQuests)
     local NewQuest = {}
+    local FoundQuest = false
 
     setmetatable(NewQuest, Quest)
 
-    -- NewQuest.Type = ""
-    -- NewQuest.Completed = 0
-    -- NewQuest.NeedToComplete = 0
-    -- NewQuest.Rewards = 0
+    NewQuest.Completed = 0
     NewQuest.QuestID = HS:GenerateGUID(false)
     NewQuest.Callback = CompletedCallback
     NewQuest.QuestGiver = QuestGiver
 
     for _,Q in pairs(QuestsArray) do
-        print("hello?")
         if not Quest:Conflicting(QuestsArray, OngoingQuests) then
-            print("come on")
-            NewQuest.NeedToComplete = math.random(5, Q.MaximumNumber)
+            NewQuest.NeedToComplete = math.random(Q.MinimumNumber, Q.MaximumNumber)
             NewQuest.ObjectiveName = Q.ObjectiveName
             NewQuest.ReadableName = Q.ReadableName
-            NewQuest.Type = Quest.Type
-            NewQuest.Rewards = math.floor(Q.BaseRewards*NeedToComplete)
+            NewQuest.Type = Q.Type
+            NewQuest.Rewards = math.floor(Q.BaseRewards*NewQuest.NeedToComplete)
+            FoundQuest = true
         end
     end
+    -- If all the requirements are met and found the quest
+    if not FoundQuest then return end
+
+    return NewQuest
+end
+
+function Quest.NewFromExisting(ExistingArray)
+    local NewQuest = {}
+
+    setmetatable(NewQuest, Quest)
+
+    for Index,Value in ExistingArray do
+        NewQuest[Index] = Value
+    end
+
+    NewQuest.Ongoing = true
 
     return NewQuest
 end
@@ -53,11 +69,17 @@ end
 function Quest:IncrementCompletion()
     self.Completed = self.Completed+1
     
-    if self.Completed == self.NeedToComplete then self.Callback() end
-end
+    Events.QuestProgression:FireClient(Player, "Progress", {
+        Completed = self.Completed,
+        QuestID = self.QuestID
+    })
 
-function Quest:DistributeRewards()
-
+    if self.Completed >= self.NeedToComplete then 
+        self.Callback()
+        -- Distributes rewards
+        Updates.Stats.IncrementEXP:Fire(Player, self.Rewards)
+        Updates.Stats.IncrementYen:Fire(Player, self.Rewards)
+    end
 end
 
 return Quest

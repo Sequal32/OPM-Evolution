@@ -6,8 +6,8 @@ Events = RP.Events
 General = Events.General
 
 local Characters = {
-	["Ninja"] = {require(Characters.Ninja:Clone()), Events.Ninja},
-	["Cyborg"] = {require(Characters.Cyborg:Clone()), Events.Cyborg},
+	-- ["Ninja"] = {require(Characters.Ninja:Clone()), Events.Ninja},
+	-- ["Cyborg"] = {require(Characters.Cyborg:Clone()), Events.Cyborg},
 	["SuperHuman"] = {require(Characters.SuperHuman:Clone()), Events.SuperHuman}
 }
 

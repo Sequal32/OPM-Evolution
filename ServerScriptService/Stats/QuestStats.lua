@@ -7,6 +7,7 @@ QuestStats = {
             ReadableName = "Vaccine Men", 
             Type = "High Level", 
             BaseRewards = 2500,
+            MinimumNumber = 5,
             MaximumNumber = 10
         },
         {
@@ -16,6 +17,7 @@ QuestStats = {
             ReadableName = "Kelp Monsters",
             Type = "High Level",
             BaseRewards = 750,
+            MinimumNumber = 5,
             MaximumNumber = 20,
         },
         {
@@ -25,6 +27,7 @@ QuestStats = {
             ReadableName = "Villains",
             Type = "Low Level",
             BaseRewards = 75,
+            MinimumNumber = 5,
             MaximumNumber = 30
         },
         {
@@ -34,6 +37,7 @@ QuestStats = {
             ReadableName = "Strong Thugs",
             Type = "Low Level",
             BaseRewards = 37.5,
+            MinimumNumber = 5,
             MaximumNumber = 50,
         },
         {
@@ -43,6 +47,7 @@ QuestStats = {
             ReadableName = "Weak Thugs",
             Type = "Low Level",
             BaseRewards = 12.5,
+            MinimumNumber = 5,
             MaximumNumber = 50
         }
     }

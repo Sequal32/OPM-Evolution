@@ -7,8 +7,8 @@ Events = RP.Events
 Updates = SS.Updates
 
 local Events = {
-	["Ninja"] = Events.Ninja,
-	["Cyborg"] = Events.Cyborg,
+	-- ["Ninja"] = Events.Ninja,
+	-- ["Cyborg"] = Events.Cyborg,
 	["SuperHuman"] = Events.SuperHuman
 }
 

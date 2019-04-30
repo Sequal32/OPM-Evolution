@@ -11,16 +11,25 @@ Events = RP.Events.General
 Updates = SS.Updates
 QuestStats = require(SS.Stats.QuestStats)
 QuestGiverStats = require(SS.Stats.QuestGiverStats)
-QuestKill = require(SS.Modules.QuestKill)
+QuestBase = require(SS.Modules.QuestBase)
 
 OnGoingPlayerQuests = {}
 
 Events.QuestProgression.OnServerEvent:Connect(function(Player, RequestType, Data)
     if RequestType == "Start" then
         local PlayerData = Updates.GetPlayerData:Invoke(Player)
-        -- GetQuestForLevel(Player, PlayerData.Level, QuestGiver)
-        local NewQuest = QuestKill.New(Data, function() end, PlayerData.Level, OnGoingPlayerQuests[Player] or {})
+        
+        local NewQuest = QuestBase.NewFromGenerator(Data, function() 
+            OnGoingPlayerQuests[Player][NewQuest.QuestID] = nil 
+            Events.QuestProgression:FireClient(Player, "Complete", {QuestID = Index})
+        end, PlayerData.Level, QuestStats.Kill, OnGoingPlayerQuests[Player] or {})
+        
+        if not NewQuest then return end
+
+        Events.QuestProgression:FireClient(Player, "Start", NewQuest)
+        OnGoingPlayerQuests[Player][NewQuest.QuestID] = NewQuest
         print(NewQuest.NeedToComplete, NewQuest.ObjectiveName, NewQuest.Type, NewQuest.Rewards)
+
     elseif RequestType == "Cancel" then
         OnGoingPlayerQuests[Player][Data.QuestID] = nil
     end
@@ -29,20 +38,8 @@ end)
 Updates.MobDied.Event:Connect(function(Perp, Mob)
     for Player,PlayerQuests in pairs(OnGoingPlayerQuests) do
         for Index,Quest in pairs(PlayerQuests) do
-            if Mob.Name == Quest.ModelName and Perp == Player then
-                PlayerQuests[Index].Completed = PlayerQuests[Index].Completed+1
-
-                if PlayerQuests[Index].Completed >= PlayerQuests[Index].NeedToComplete then
-                    Events.QuestProgression:FireClient(Player, "Complete", {QuestID = Index})
-                    Updates.Stats.IncrementEXP:Fire(Player, PlayerQuests[Index].Rewards)
-                    Updates.Stats.IncrementYen:Fire(Player, PlayerQuests[Index].Rewards)
-                    OnGoingPlayerQuests[Player][Index] = nil
-                else
-                    Events.QuestProgression:FireClient(Player, "Progress", {
-                        Completed = PlayerQuests[Index].Completed,
-                        QuestID = Index
-                    })
-                end
+            if Mob.Name == Quest.ObjectiveName and Perp == Player then
+                PlayerQuests[Index]:IncrementCompletion()
             end
         end
     end
@@ -50,23 +47,14 @@ end)
 
 game.Players.PlayerAdded:Connect(function(Player)
     local Data = Updates.GetData:Invoke("Quests", Player)
+    OnGoingPlayerQuests[Player] = {}
     if not Data then return end
 
     for _,Quest in pairs(Data) do
-        local QuestID = HS:GenerateGUID(false)
-        OnGoingPlayerQuests[Player] = {}
-        OnGoingPlayerQuests[Player][QuestID] = Quest
+        local NewQuest = QuestBase.NewFromExisting(Quest)
+        OnGoingPlayerQuests[Player][NewQuest.QuestID] = NewQuest
 
-        Events.QuestProgression:FireClient(Player, "Start", {
-            Type = Quest.Type,
-            Rewards = Quest.Rewards,
-            ReadableName = Quest.ReadableName,
-            Completed = Quest.Completed,
-            NeedToComplete = Quest.NeedToComplete,
-            Ongoing = true,
-            QuestID = QuestID
-        })
-
+        Events.QuestProgression:FireClient(Player, "Start", NewQuest)
     end
 end)
 

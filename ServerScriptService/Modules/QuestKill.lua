@@ -5,7 +5,6 @@ QuestKill = {}
 QuestKill.__index = QuestKill
 
 function QuestKill.New(QuestGiver, CompletedCallback, Level, OngoingQuests)
-    print(OngoingQuests)
     local NewKillQuest = Quest.New(QuestGiver, CompletedCallback, Quest.QuestStats.Kill, OngoingQuests)
     
     setmetatable(NewKillQuest, Quest)
