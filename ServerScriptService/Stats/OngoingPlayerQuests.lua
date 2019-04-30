@@ -1,0 +1,3 @@
+OngoingPlayerQuests ={}
+
+return OngoingPlayerQuests

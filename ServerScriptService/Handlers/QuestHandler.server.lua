@@ -10,15 +10,14 @@ NumGen = Random.new()
 Events = RP.Events.General
 Updates = SS.Updates
 QuestStats = require(SS.Stats.QuestStats)
+OnGoingPlayerQuests = require(SS.Stats.OngoingPlayerQuests)
 QuestGiverStats = require(SS.Stats.QuestGiverStats)
 QuestBase = require(SS.Modules.QuestBase)
-
-OnGoingPlayerQuests = {}
 
 Events.QuestProgression.OnServerEvent:Connect(function(Player, RequestType, Data)
     if RequestType == "Start" then
         local PlayerData = Updates.GetPlayerData:Invoke(Player)
-        
+
         local NewQuest = QuestBase.NewFromGenerator(Data, function() 
             OnGoingPlayerQuests[Player][NewQuest.QuestID] = nil 
             Events.QuestProgression:FireClient(Player, "Complete", {QuestID = Index})
@@ -26,10 +25,8 @@ Events.QuestProgression.OnServerEvent:Connect(function(Player, RequestType, Data
         
         if not NewQuest then return end
 
-        Events.QuestProgression:FireClient(Player, "Start", NewQuest)
+        Events.QuestProgression:FireClient(Player, "Start", NewQuest:GetClientData())
         OnGoingPlayerQuests[Player][NewQuest.QuestID] = NewQuest
-        print(NewQuest.NeedToComplete, NewQuest.ObjectiveName, NewQuest.Type, NewQuest.Rewards)
-
     elseif RequestType == "Cancel" then
         OnGoingPlayerQuests[Player][Data.QuestID] = nil
     end

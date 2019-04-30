@@ -82,4 +82,13 @@ function Quest:IncrementCompletion()
     end
 end
 
+function Quest:GetClientData()
+    return {
+        Rewards = self.Rewards,
+        NeedToComplete = self.NeedToComplete,
+        QuestID = self.QuestID,
+        Completed = self.Completed,
+    }
+end
+
 return Quest
