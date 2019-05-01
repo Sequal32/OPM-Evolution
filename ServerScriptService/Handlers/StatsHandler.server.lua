@@ -6,6 +6,7 @@ DS = game:GetService("DataStoreService")
 MS = game:GetService("MarketplaceService")
 
 Analytics = require(SD.GameAnalytics)
+PlayerStatsSystem = require(SS.Modules.PlayerStats)
 
 NumGen = Random.new()
 
@@ -14,7 +15,7 @@ Updates = SS.Updates
 Events = RP.Events
 General = Events.General
 
-PlayerCurrentStats = {}
+PlayerCurrentStats = require(SS.Stats.CurrentPlayerStats)
 LastSaves = {}
 PlayerCharacters = {}
 HealthRegenCooldowns = {}
@@ -25,20 +26,7 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 		local NewData, FirstTime
 		
 		if not PlayerStats then
-			NewData, FirstTime = Updates.GetData:Invoke("Stats", Player)
-            PlayerStats = NewData
-			
-			if FirstTime then -- Analytics
-				Analytics:addProgressionEvent(Player.UserId, {
-					progressionStatus = Analytics.EGAProgressionStatus.Start,
-					progression01 = "level0-10"
-				})
-			end
-            
-            PlayerStats.EXP = PlayerStats.EXP or 0
-			PlayerStats.EXPNeeded = math.ceil(1.11^NewData.Level * 125)
-			PlayerStats.MaxHealth = NewData.DefenseLevel*10
-			PlayerStats.Health = PlayerStats.MaxHealth
+			PlayerStats = PlayerStatsSystem.NewFromDatastore(Player)
 			
 			HealthRegenCooldowns[Player] = 0
 			LastSaves[Player] = 0
@@ -53,21 +41,17 @@ function General.StatsServer.OnServerInvoke(Player, RequestType, Data)
 		
 	elseif RequestType == "SINGLE" then
 		return PlayerCurrentStats[Player][Data]
-	elseif RequestType == "UPDATE" then
-		-- Check if a valid amount is being added
-		local TotalSpending = 0
-		for _,Value in pairs(Data) do
-			TotalSpending = TotalSpending+Value
-		end
-		if TotalSpending > PlayerStats.AttributePoints then return end
-		-- Apply attributes
-		for Attribute,Value in pairs(Data) do
-			PlayerCurrentStats[Player][Attribute] = PlayerCurrentStats[Player][Attribute]+Value 
-        end
-        PlayerStats.MaxHealth = PlayerStats.DefenseLevel*10
-		PlayerStats.AttributePoints = PlayerStats.AttributePoints-TotalSpending
-		General.StatsClient:FireClient(Player, "ALL", PlayerStats)
-		PlayerCurrentStats[Player] = PlayerStats
+	elseif RequestType == "UPDATE" then -- Update stats using attribute points
+		-- -- Check if a valid amount is being added
+		-- local TotalSpending = 0
+		-- for _,Value in pairs(Data) do
+		-- 	TotalSpending = TotalSpending+Value
+		-- end
+		-- if TotalSpending > PlayerStats.AttributePoints then return end
+		-- -- Apply attributes
+		-- PlayerCurrentStats[Player]:BulkChange(Data)
+		-- PlayerCurrentStats[Player]:CalculateVars()
+		-- General.StatsClient:FireClient(Player, "ALL", PlayerStats)
 		return true
 	end
 end
@@ -81,26 +65,23 @@ function General.CharacterServer.OnServerInvoke(Player, RequestType, Data)
 end
 
 function Updates.HealthChange.OnInvoke(Player, Change)  -- RETURNS WHETHER THE PLAYER DIED
-	PlayerCurrentStats[Player].Health = math.clamp(PlayerCurrentStats[Player].Health+Change, 0, math.huge)
-	General.StatsClient:FireClient(Player, "SINGLE", {"Health", PlayerCurrentStats[Player].Health})
+	local PlayerStats = PlayerCurrentStats[Player]
+
+	PlayerStats:IncrementHealth(Change)
 	
 	HealthRegenCooldowns[Player] = 3
 	-- VISUAL
 	local UI = Player.Character.Head.Info
-	UI.Health.Fill.Size = UDim2.new(PlayerCurrentStats[Player].Health/PlayerCurrentStats[Player].MaxHealth, 0, 1, 0)
-	UI.Health.Text.Text = PlayerCurrentStats[Player].Health.."/"..PlayerCurrentStats[Player].MaxHealth
+	UI.Health.Fill.Size = UDim2.new(PlayerStats.Health/PlayerStats.MaxHealth, 0, 1, 0)
+	UI.Health.Text.Text = PlayerStats.Health.."/"..PlayerStats.MaxHealth
 	-- DETECT DEAD
-	if PlayerCurrentStats[Player].Health <= 0 and Player.Character.Humanoid.Health ~= 0 then
+	if PlayerStats.Health <= 0 and Player.Character.Humanoid.Health ~= 0 then
 		Player.Character.Humanoid.Health = 0
 		CS:RemoveTag(Player.Character, "AttackablePlayer")
-		return PlayerCurrentStats[Player].Level
+		return PlayerStats.Level
 	end
 	
 	return false
-end
-
-function Updates.GetPlayerData.OnInvoke(Player)
-    return PlayerCurrentStats[Player]
 end
 
 -- LOADING CHARACTER
@@ -166,50 +147,11 @@ General.LoadCharacter.OnServerEvent:Connect(LoadCharacter)
 Updates.Stats.IncrementEXP.Event:Connect(function(Player, EXP)
 	local PlayerStats = PlayerCurrentStats[Player]
 	
-	PlayerStats.EXP = PlayerStats.EXP + (MS:UserOwnsGamePassAsync(Player.UserId, 6170581) and EXP*2 or EXP) -- IF USER OWNS 2x EXP gamepass
-	
-	if PlayerStats.EXP >= PlayerStats.EXPNeeded then
-		-- Grant Level
-		PlayerStats.EXP = PlayerStats.EXP-PlayerStats.EXPNeeded
-		PlayerStats.Level = PlayerStats.Level+1
-		PlayerStats.EXPNeeded = math.ceil(1.11^PlayerStats.Level * 125)
-		PlayerStats.MaxHealth = PlayerStats.DefenseLevel*10
-		
-		-- Analytics
-		if PlayerStats.Level % 10 == 0 then
-			Analytics:addProgressionEvent(Player.UserId, {
-				progressionStatus = Analytics.EGAProgressionStatus.Complete,
-				progression01 = "level"..tostring(PlayerStats.Level-10).."-"..tostring(PlayerStats.Level)
-			})
-			Analytics:addProgressionEvent(Player.UserId, {
-				progressionStatus = Analytics.EGAProgressionStatus.Start,
-				progression01 = "level"..tostring(PlayerStats.Level).."-"..tostring(PlayerStats.Level+10)
-			})
-		end
-		
-		-- Attribute level giving
-		if PlayerStats.Level % 100 == 0 then
-			PlayerStats.AttributePoints = PlayerStats.AttributePoints+25
-		else
-			PlayerStats.AttributePoints = PlayerStats.AttributePoints+2
-		end
-		-- Level up each skill one level
-		PlayerStats.StaminaLevel = PlayerStats.StaminaLevel+1
-		PlayerStats.DefenseLevel = PlayerStats.DefenseLevel+1
-		PlayerStats.StrengthLevel = PlayerStats.StrengthLevel+1
-		PlayerStats.AgilityLevel = PlayerStats.AgilityLevel+1
-		
-		PlayerCurrentStats[Player] = PlayerStats
-		
-		General.StatsClient:FireClient(Player, "ALL", PlayerStats)
-	else
-		General.StatsClient:FireClient(Player, "SINGLE", {"EXP", PlayerStats.EXP})
-	end
+	PlayerStats:IncrementEXP(MS:UserOwnsGamePassAsync(Player.UserId, 6170581) and EXP*2 or EXP) -- IF USER OWNS 2x EXP gamepass
 end)
 
 Updates.Stats.IncrementYen.Event:Connect(function(Player, Yen)
-	PlayerCurrentStats[Player].Yen = PlayerCurrentStats[Player].Yen + (MS:UserOwnsGamePassAsync(Player.UserId, 6193640) and Yen*2 or Yen) -- IF USER OWNS 2x EXP gamepass
-	General.StatsClient:FireClient(Player, "SINGLE", {"Yen", PlayerCurrentStats[Player].Yen})
+	PlayerCurrentStats[Player]:IncrementYen(MS:UserOwnsGamePassAsync(Player.UserId, 6193640) and Yen*2 or Yen) -- IF USER OWNS 2x EXP gamepass
 end)
 
 -- MARKETPLACE HANDLING --
@@ -244,40 +186,23 @@ end
 
 -- ADMIN PANEL
 RP.Events.Admin.AppendData.OnServerEvent:Connect(function(Player, Level, Strength, Agility, Stamina, EXP, Yen, AttributePoints)
-    PlayerCurrentStats[Player].Strength = Strength or PlayerCurrentStats[Player].Strength
-    PlayerCurrentStats[Player].Stamina = Stamina or PlayerCurrentStats[Player].Stamina
-    PlayerCurrentStats[Player].Defense = Defense or PlayerCurrentStats[Player].Defense
-    PlayerCurrentStats[Player].Agility = Agility or PlayerCurrentStats[Player].Agility
-    PlayerCurrentStats[Player].Level = Level or  PlayerCurrentStats[Player].Level
-    PlayerCurrentStats[Player].EXP = EXP or PlayerCurrentStats[Player].EXP
-    PlayerCurrentStats[Player].Yen = Yen or PlayerCurrentStats[Player].Yen
-    PlayerCurrentStats[Player].AttributePoints = AttributePoints or PlayerCurrentStats[Player].AttributePoints
+	local PlayerStats = PlayerCurrentStats[Player]
+	PlayerStats:BulkChange({
+		Strength = Strength or PlayerStats.StrengthLevel,
+		Stamina = Stamina or PlayerStats.StaminaLevel,
+		Defense = Defense or PlayerStats.DefenseLevel,
+		Agility = Agility or PlayerStats.AgilityLevel,
+		Level = Level or PlayerStats.Level,
+		EXP = EXP or PlayerStats.EXP,
+		Yen = Yen or PlayerStats.Yen,
+	})
 
-    General.StatsClient:FireClient(Player, "ALL", PlayerCurrentStats[Player])
-
-    SaveCurrentStats(Player)
+    PlayerStats:SaveStats()
 end)
-
--- Save data upon player leaving and removes unneeded data
-function SaveCurrentStats(Player)
-    local PlayerStats = PlayerCurrentStats[Player]
-    if PlayerStats then
-        Updates.SaveData:Invoke("Stats", Player, {
-            ["Yen"] = PlayerStats.Yen,
-            ["EXP"] = PlayerStats.EXP,
-            ["StrengthLevel"] = PlayerStats.StrengthLevel,
-            ["StaminaLevel"] = PlayerStats.StaminaLevel,
-            ["DefenseLevel"] = PlayerStats.DefenseLevel,
-            ["AgilityLevel"] = PlayerStats.AgilityLevel,
-            ["Level"] = PlayerStats.Level,
-            ["AttributePoints"] = PlayerStats.AttributePoints
-        })
-    end
-end
 
 game.Players.PlayerRemoving:Connect(function(Player)
 	if PlayerCurrentStats[Player] then
-		SaveCurrentStats(Player)
+		PlayerCurrentStats[Player]:SaveStats()
 		
 		PlayerCurrentStats[Player] = nil
 		LastSaves[Player] = nil
@@ -296,8 +221,8 @@ while wait(0.5) do
 			-- Health regen
 			if PlayerStats and CharacterLoaded then
 				if HealthRegenCooldowns[Player] <= 0 and Player.Character.Humanoid.Health ~= 0 then
-					PlayerStats.Health = math.clamp(PlayerStats.Health+PlayerStats.MaxHealth * 0.01, 0, PlayerStats.MaxHealth)
-					General.StatsClient:FireClient(Player, "SINGLE", {"Health", PlayerStats.Health})
+					PlayerStats:IncrementHealth(PlayerStats.MaxHealth * 0.01)
+			
 					local UI = Player.Character.Head.Info
 					UI.Health.Fill.Size = UDim2.new(PlayerStats.Health/PlayerStats.MaxHealth, 0, 1, 0)
 					UI.Health.Text.Text = PlayerStats.Health.."/"..PlayerStats.MaxHealth
@@ -311,8 +236,7 @@ while wait(0.5) do
 				spawn(function()
 					wait(5)
 					
-					PlayerStats.Health = PlayerStats.MaxHealth
-					General.StatsClient:FireClient(Player, "SINGLE", {"Health", PlayerStats.Health, true})
+					PlayerStats:IncrementHealth(PlayerStats.MaxHealth, true)
 					
 					repeat wait(2) LoadCharacter(Player, PlayerCharacters[Player]) until Player.Character
 				end)
@@ -321,12 +245,10 @@ while wait(0.5) do
 			-- Save data automatically every minute
 			if LastSaves[Player] and LastSaves[Player] >= 60 then
 				LastSaves[Player] = 0
-				SaveCurrentStats(Player)
+				PlayerStats:SaveStats()
 			else
 				LastSaves[Player] = LastSaves[Player]+0.5
 			end
-			
-			PlayerCurrentStats[Player] = PlayerStats
 			
 		end
 	end

@@ -1,0 +1,3 @@
+CurrentPlayerStats = {}
+
+return CurrentPlayerStats

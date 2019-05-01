@@ -17,7 +17,7 @@ end
 
 function ImplementStats(Data)
 	Stats.Max.Health = Data.MaxHealth
-	Stats.Max.Stamina = Data.StaminaLevel
+	Stats.Max.Stamina = Data.StaminaLevel*10
 	Stats.Current.Damage = Data.StrengthLevel
     Stats.Current.Speed = Data.AgilityLevel * 0.000043 + 32
     	
