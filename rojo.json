@@ -29,6 +29,10 @@
     "Events": {
       "path": "ReplicatedStorage/Events",
       "target": "ReplicatedStorage.Events"
+    },
+    "Modules": {
+      "path": "ReplicatedStorage/Modules",
+      "target": "ReplicatedStorage.Modules"
     }
   }
 }
