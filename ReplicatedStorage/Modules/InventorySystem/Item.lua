@@ -1,11 +1,11 @@
 ItemFactory = {}
 
-function Item.New(Name, Droppable, QuestItem, Quantity)
+function ItemFactory.New(Name, Droppable, QuestItem, Quantity)
     local Item = {}
 
     Item.Name = Name
     Item.Droppable = Droppable
-    Item.QuestItem = QuestItem
+    Item.QuestItem = QuesuesttItem
     Item.Quantity = Quantity
 
     return Item

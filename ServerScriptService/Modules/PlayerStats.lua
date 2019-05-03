@@ -119,7 +119,7 @@ function PlayerStats.NewFromDatastore(Player)
 end
 
 function PlayerStats:SaveStats()
-    return Updates.SaveData:Invoke("Stats", Player, {
+    return Updates.SaveData:Invoke("Stats", self.Player, {
         ["Yen"] = self.Yen,
         ["EXP"] = self.EXP,
         ["StrengthLevel"] = self.StrengthLevel,

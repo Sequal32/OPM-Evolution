@@ -10,7 +10,9 @@ Updates = SS.Updates
 Quest.QuestStats = require(SS.Stats.QuestStats)
 Quest.QuestGiverStats = require(SS.Stats.QuestGiverStats)
 
-function Quest.NewFromGenerator(QuestGiver, CompletedCallback, Level,  QuestsArray, OngoingQuests)
+Events = RP.Events.General
+
+function Quest.NewFromGenerator(QuestGiver, CompletedCallback, Level,  QuestsArray, OngoingQuests, Player)
     local NewQuest = {}
     local FoundQuest = false
 
@@ -20,6 +22,7 @@ function Quest.NewFromGenerator(QuestGiver, CompletedCallback, Level,  QuestsArr
     NewQuest.QuestID = HS:GenerateGUID(false)
     NewQuest.Callback = CompletedCallback
     NewQuest.QuestGiver = QuestGiver
+    NewQuest.Player = Player
 
     for _,Q in pairs(QuestsArray) do
         if not Quest:Conflicting(QuestsArray, OngoingQuests) then
@@ -69,7 +72,7 @@ end
 function Quest:IncrementCompletion()
     self.Completed = self.Completed+1
     
-    Events.QuestProgression:FireClient(Player, "Progress", {
+    Events.QuestProgression:FireClient(self.Player, "Progress", {
         Completed = self.Completed,
         QuestID = self.QuestID
     })
@@ -77,8 +80,8 @@ function Quest:IncrementCompletion()
     if self.Completed >= self.NeedToComplete then 
         self.Callback()
         -- Distributes rewards
-        Updates.Stats.IncrementEXP:Fire(Player, self.Rewards)
-        Updates.Stats.IncrementYen:Fire(Player, self.Rewards)
+        Updates.Stats.IncrementEXP:Fire(self.Player, self.Rewards)
+        Updates.Stats.IncrementYen:Fire(self.Player, self.Rewards)
     end
 end
 
@@ -88,6 +91,7 @@ function Quest:GetClientData()
         NeedToComplete = self.NeedToComplete,
         QuestID = self.QuestID,
         Completed = self.Completed,
+        ReadableName = self.ReadableName
     }
 end
 

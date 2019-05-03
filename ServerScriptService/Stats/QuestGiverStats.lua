@@ -1,10 +1,12 @@
-QuestGiverStats = {
+local Stats = {}
+
+Stats.Giver = {
     [workspace.Genos] = {
         Tiers = {1, 2}
     }
 }
 
-TierQuests = {
+Stats.TierQuests = {
     -- First Tier
     -- {"Collect", "Perform"},
     {"Collect"},
@@ -13,4 +15,4 @@ TierQuests = {
 }
 
 
-return QuestGiverStats
+return Stats

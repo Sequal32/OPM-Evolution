@@ -9,26 +9,29 @@ NumGen = Random.new()
 
 Events = RP.Events.General
 Updates = SS.Updates
+
+NumberDictionary = require(SS.Modules.NumberDictionary)
+
 QuestStats = require(SS.Stats.QuestStats)
+PlayerStats = require(SS.Stats.CurrentPlayerStats)
 OnGoingPlayerQuests = require(SS.Stats.OngoingPlayerQuests)
 QuestGiverStats = require(SS.Stats.QuestGiverStats)
 QuestBase = require(SS.Modules.QuestBase)
 
 Events.QuestProgression.OnServerEvent:Connect(function(Player, RequestType, Data)
     if RequestType == "Start" then
-        local PlayerData = Updates.GetPlayerData:Invoke(Player)
+        local PlayerData = PlayerStats[Player]
         local NewQuest
+
+        Action = QuestGiverStats.TierQuests[1][1]
+        local NewQuest = QuestBase.NewFromGenerator(Data, CompleteQuest, PlayerData.Level, QuestStats[Action], OnGoingPlayerQuests[Player] or {}, Player)
+        
+        if not NewQuest then return end
 
         local function CompleteQuest()
             OnGoingPlayerQuests[Player][NewQuest.QuestID] = nil 
             Events.QuestProgression:FireClient(Player, "Complete", {QuestID = Index})
         end
-
-        Action = QuestGiverStats[Data][math.random(#QuestGiverStats[Data])]
-
-        local NewQuest = QuestBase.NewFromGenerator(Data, CompleteQuest, PlayerData.Level, QuestStats[Action], OnGoingPlayerQuests[Player] or {})
-        
-        if not NewQuest then return end
 
         Events.QuestProgression:FireClient(Player, "Start", NewQuest:GetClientData())
         OnGoingPlayerQuests[Player][NewQuest.QuestID] = NewQuest

@@ -52,13 +52,15 @@ QuestStats = {
         }
     },
     Collect = {
-        StartLevel = 0,
-        CapLevel = 10,
-        ObjectiveName = "Apple",
-        ReadableName = "Apple",
-        BaseRewards = 5,
-        MinimumNumber = 1,
-        MaximumNumber = 5,
+        {
+            StartLevel = 0,
+            CapLevel = 10,
+            ObjectiveName = "Apple",
+            ReadableName = "Apple",
+            BaseRewards = 5,
+            MinimumNumber = 1,
+            MaximumNumber = 5,
+        }
     }
 }
 

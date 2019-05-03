@@ -14,7 +14,7 @@ function UpdateQuest(Player, ItemName)
 
     for Index,Quest in pairs(OngoingQuests[Player]) do
         if ItemName == Quest.ObjectiveName then
-            PlayerQuests[Index]:IncrementCompletion()
+            Quest:IncrementCompletion()
             QuestItem = true
         end
     end
@@ -28,7 +28,7 @@ end
 
 function Events.InventoryChange.OnServerInvoke(Player, Type, Item)
     if Type == "Add" then
-        if not CheckVaidPartAsItem then return end
+        if not CheckVaidPartAsItem(Item) then return end
 
         local IsQuestItem = UpdateQuest(Player, Item.Name)
         local NewItem = ItemFactory.New(Item.Name, not IsQuestItem, IsQuestItem, Item.Quantity.Value)
