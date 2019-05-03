@@ -6,7 +6,8 @@ QuestGiverStats = {
 
 TierQuests = {
     -- First Tier
-    {"Collect", "Perform"},
+    -- {"Collect", "Perform"},
+    {"Collect"},
     -- Second Tier
     {"Kill"}
 }

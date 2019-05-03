@@ -22,6 +22,8 @@ function PlayerStats.New(Player, StatsArray)
     NewPlayerStats.SkillPoints = StatsArray.SkillPoints or 0
     NewPlayerStats.Yen = StatsArray.Yen or 0
     NewPlayerStats.EXP = StatsArray.EXP or 0
+
+    NewPlayerStats.Relationships = StatsArray.Relationships or {}
     
     NewPlayerStats:CalculateVars()
 
@@ -95,6 +97,10 @@ function PlayerStats:IncrementLevel()
     Events.StatsClient:FireClient(self.Player, "ALL", self)
 end
 
+function PlayerStats:IncrementRelationship(Name, Points)
+    self.Relationships[Name] = self.Relationships[Name]+Points
+end
+
 function PlayerStats:BulkChange(ChangeArray)
     for Index,Value in pairs(ChangeArray) do
         self[Index] = Value
@@ -121,7 +127,7 @@ function PlayerStats:SaveStats()
         ["DefenseLevel"] = self.DefenseLevel,
         ["AgilityLevel"] = self.AgilityLevel,
         ["Level"] = self.Level,
-        ["AttributePoints"] = self.AttributePoints
+        ["Relationships"] = self.Relationships
     })
 end
 

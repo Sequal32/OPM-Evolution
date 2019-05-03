@@ -17,11 +17,16 @@ QuestBase = require(SS.Modules.QuestBase)
 Events.QuestProgression.OnServerEvent:Connect(function(Player, RequestType, Data)
     if RequestType == "Start" then
         local PlayerData = Updates.GetPlayerData:Invoke(Player)
+        local NewQuest
 
-        local NewQuest = QuestBase.NewFromGenerator(Data, function() 
+        local function CompleteQuest()
             OnGoingPlayerQuests[Player][NewQuest.QuestID] = nil 
             Events.QuestProgression:FireClient(Player, "Complete", {QuestID = Index})
-        end, PlayerData.Level, QuestStats.Kill, OnGoingPlayerQuests[Player] or {})
+        end
+
+        Action = QuestGiverStats[Data][math.random(#QuestGiverStats[Data])]
+
+        local NewQuest = QuestBase.NewFromGenerator(Data, CompleteQuest, PlayerData.Level, QuestStats[Action], OnGoingPlayerQuests[Player] or {})
         
         if not NewQuest then return end
 
