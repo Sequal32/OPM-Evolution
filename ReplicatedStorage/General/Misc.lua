@@ -37,12 +37,6 @@ end
 function _S.GetCharacterParts(Character)
 	local Array = {}
 	if Character then
-		for _,Part in pairs(Character:GetChildren()) do
-			if Part:IsA("BasePart") then
-				table.insert(Array, Part)
-			end
-		end
-		
 		for _,Part in pairs(Character:GetDescendants()) do
 			if Part:IsA("BasePart") then
 				table.insert(Array, Part)
