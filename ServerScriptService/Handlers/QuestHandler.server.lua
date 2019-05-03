@@ -24,14 +24,12 @@ Events.QuestProgression.OnServerEvent:Connect(function(Player, RequestType, Data
         local NewQuest
 
         Action = QuestGiverStats.TierQuests[1][1]
-        local NewQuest = QuestBase.NewFromGenerator(Data, CompleteQuest, PlayerData.Level, QuestStats[Action], OnGoingPlayerQuests[Player] or {}, Player)
-        
-        if not NewQuest then return end
-
         local function CompleteQuest()
             OnGoingPlayerQuests[Player][NewQuest.QuestID] = nil 
-            Events.QuestProgression:FireClient(Player, "Complete", {QuestID = Index})
         end
+        NewQuest = QuestBase.NewFromGenerator(Data, CompleteQuest, PlayerData.Level, Action, OnGoingPlayerQuests[Player] or {}, Player)
+        
+        if not NewQuest then return end
 
         Events.QuestProgression:FireClient(Player, "Start", NewQuest:GetClientData())
         OnGoingPlayerQuests[Player][NewQuest.QuestID] = NewQuest

@@ -11,4 +11,8 @@ function ItemFactory.New(Name, Droppable, QuestItem, Quantity)
     return Item
 end
 
+function ItemFactory.NewFromPart(Part)
+
+end
+
 return ItemFactory

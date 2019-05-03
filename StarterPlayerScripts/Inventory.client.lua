@@ -10,12 +10,16 @@ PickupItemUI = Player.PlayerGui:WaitForChild("MainUI"):WaitForChild("GameUI"):Wa
 Events = RP.Events.General
 -- Requires
 SkillTrigger = RP.General.SkillTrigger
+InventoryFactory = require(RP.Modules.InventorySystem.Inventory)
 -- Running Variables
 Target = Mouse.Target
 
 function PickupItem()
     if not Target then return end
-    Events.InventoryChange:InvokeServer("Add", Target)
+    local NewItem = Events.InventoryChange:InvokeServer("Add", Target)
+    if NewItem then
+        Inventory:AddItem(NewItem)
+    end
 end
 
 -- Create pickup button
@@ -23,6 +27,9 @@ Pickup = require(SkillTrigger:Clone())
 Pickup.New("Interact", Enum.KeyCode.E, false, "Press", {}, {
     Main = PickupItem  
 })
+
+-- Create inventory
+Inventory = InventoryFactory.new()
 
 while wait() do
     Target = Mouse.Target

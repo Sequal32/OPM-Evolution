@@ -5,26 +5,6 @@ local rep_storage = game:GetService("ReplicatedStorage")
 local ui_data = rep_storage:WaitForChild("UI_Data")
 local ui_remotes = ui_data:WaitForChild("UI_Remotes")
 
--- Intro
-game.Players.PlayerAdded:Connect(function(player)
-	ui_remotes.PlayerAdded:FireClient(player)
-end)
-
-game.Players.PlayerAdded:Connect(function(player)
-	player.CharacterAdded:Connect(function(char)
-		char.Humanoid.Died:Connect(function()
-			wait(6)
-			ui_remotes.CharacterAdded:FireClient(player)
-		end)
-	end)
-end)
-
-function returnPlayerCurrentLevel()
-	-- need data store
-end
-
-ui_remotes.GetPlayerCurrentLevel.OnServerInvoke  = returnPlayerCurrentLevel
-
 -- Character Customization
 function AddAccessory(player,character,accessory)
 	wait(1)

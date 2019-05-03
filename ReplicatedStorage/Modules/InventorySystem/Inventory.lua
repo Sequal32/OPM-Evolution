@@ -1,6 +1,9 @@
 Inventory = {}
 Inventory.__index = Inventory
 
+SS = game:GetService("ServerScriptService")
+Items = require(SS.Stats.Items)
+
 function Inventory.New()
     local NewInventory = {}
 

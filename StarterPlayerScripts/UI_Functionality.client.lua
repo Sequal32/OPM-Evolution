@@ -1499,8 +1499,8 @@ function UpdateQuestView(QuestID)
         
         QuestInfoFrame.CompleteOutOfTotal.Text = QuestData.Completed.."/"..QuestData.NeedToComplete
         QuestInfoFrame.PercentageComplete.Text = tostring(math.floor(Fraction*100)).."% Done"
-        QuestInfoFrame.QuestDescription.Text = string.upper("Kill "..QuestData.NeedToComplete.." "..QuestData.ReadableName)
-        QuestInfoFrame.QuestName.Text = "Kill Order"
+        QuestInfoFrame.QuestDescription.Text = QuestData.QuestDescription
+        QuestInfoFrame.QuestName.Text = QuestData.QuestName
         QuestInfoFrame.QuestRewards.Text = QuestData.Rewards.." XP".." + "..QuestData.Rewards.." YEN"
 
         if #OngoingQuestsIDs > 1 then
@@ -1536,6 +1536,11 @@ function UpdateQuestView(QuestID)
     end
 end
 
+QuestNames = {
+	Kill = "Kill Order",
+	Collect = "Item Collection",
+}
+
 GeneralEvents.QuestProgression.OnClientEvent:Connect(function(State, Data)
     if State == "Start" then
         if #OngoingQuestsIDs >= 2 then return end -- redundancy checking
@@ -1547,9 +1552,13 @@ GeneralEvents.QuestProgression.OnClientEvent:Connect(function(State, Data)
             return
         end
 
+		-- Strings relevant to the quest
+		OngoingQuests[Data.QuestID].QuestName = QuestNames[Data.Type]
+		OngoingQuests[Data.QuestID].QuestDescription = string.upper(string.format("%s %d %s", Type, QuestInfo.NeedToComplete, QuestInfo.ReadableName))
+
         local Connection, Connection2
-        QuestFrame.QuestName.Text = "Kill Order"
-        QuestFrame.QuestDescription.Text = string.upper("Kill "..Data.NeedToComplete.." "..Data.ReadableName)
+        QuestFrame.QuestName.Text = OngoingQuests[Data.QuestID].QuestName
+        QuestFrame.QuestDescription.Text = OngoingQuests[Data.QuestID].QuestDescription
         QuestFrame.Container.EXPReward.Text = Data.Rewards.." EXP"
         QuestFrame.Container.YenReward.Text = Data.Rewards.." Yen"
         QuestFrame.AcceptButton.Position = AcceptButtonPositions.Left
@@ -1584,7 +1593,7 @@ GeneralEvents.QuestProgression.OnClientEvent:Connect(function(State, Data)
 
         QuestFrame.Visible = true
         QuestFrame.QuestName.Text = "Quest Complete"
-        QuestFrame.QuestDescription.Text = string.upper("Kill "..QuestInfo.NeedToComplete.." "..QuestInfo.ReadableName)
+        QuestFrame.QuestDescription.Text = QuestInfo.QuestDescription
         QuestFrame.Container.EXPReward.Text = QuestInfo.Rewards.." EXP"
         QuestFrame.Container.YenReward.Text = QuestInfo.Rewards.." Yen"
         QuestFrame.DeclineButton.Visible = false
